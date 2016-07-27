@@ -41,7 +41,7 @@ export default class GmmDecoder {
 			likelihoods: lklhds			
 		}
 
-		// do something for regression here :
+		// do something for regression here (add regression results to results) :
 		// if(model.shared_parameters.bimodal) {
 		//
 		// }
@@ -82,11 +82,38 @@ export default class GmmDecoder {
 				let res = {};
 				res.instant_likelihood = 0;
 				res.log_likelihood = 0;
-				res.likelihood_buffer = [];
+
+				res.likelihood_buffer = new Array(this.likelihoodWindow);
 				res.likelihood_buffer.length = this.likelihoodWindow;
-				for(let j=0; j<this.likelihoodWindow; j++) {
+				for(let j = 0; j < this.likelihoodWindow; j++) {
 					res.likelihood_buffer[j] = 1 / this.likelihoodWindow;
 				}
+
+                // the following variables are used for regression :
+
+				res.beta = new Array(this.model.models[i].components.length);
+				for(let j = 0; j < res.beta.length; j++) {
+					res.beta[j] = 1 / res.beta.length;
+				}
+				
+				let params = this.model.shared_parameters;
+                let dimOut = params.dimension - params.dimension_input;
+				res.output_values = new Array(dimOut);
+				for(let j = 0; j < dimOut; j++) {
+					res.output_values[j] = 0.0;
+				}
+
+                let outCovarSize;
+                if(this.model.configuration.default_parameters.covariance_mode == 0) { // full
+                    outCovarSize = dimOut * dimOut;
+                }
+                else { // diagonal
+                    outCovarSize = dimOut;
+                }
+                res.output_covariance = new Array(outCovarSize);
+
+                // add to global model results object :
+
 				this.modelResults.singleClassGmmModelResults.push(res);
 			}
 		}
