@@ -42,9 +42,10 @@ export default class GmmDecoder {
 		}
 
 		// do something for regression here (add regression results to results) :
-		// if(model.shared_parameters.bimodal) {
-		//
-		// }
+		if(this.model.shared_parameters.bimodal) {
+            results.output_values = this.modelResults.output_values.slice(0);
+            // results.output_covariance = this.modelResults.output_covariance.slice(0);
+		}
 
 		resultsFunction(results);
 		// OR :
@@ -71,6 +72,28 @@ export default class GmmDecoder {
 				singleClassGmmModelResults: []
 			};
 
+            // the following variables are used for regression :
+
+            let params = this.model.shared_parameters;
+            let dimOut = params.dimension - params.dimension_input;
+            this.modelResults.output_values = new Array(dimOut);
+            for(let i = 0; i < dimOut; i++) {
+                this.modelResults.output_values[i] = 0.0;
+            }
+
+            let outCovarSize;
+            if(this.model.configuration.default_parameters.covariance_mode == 0) { // full
+                outCovarSize = dimOut * dimOut;
+            }
+            else { // diagonal
+                outCovarSize = dimOut;
+            }
+            this.modelResults.output_covariance = new Array(outCovarSize);
+            for(let i = 0; i < dimOut; i++) {
+                this.modelResults.output_covariance[i] = 0.0;
+            }
+
+
 			for(let i=0; i<model.models.length; i++) {
 
 				this.modelResults.instant_likelihoods[i] = 0;
@@ -96,23 +119,10 @@ export default class GmmDecoder {
 					res.beta[j] = 1 / res.beta.length;
 				}
 				
-				let params = this.model.shared_parameters;
-                let dimOut = params.dimension - params.dimension_input;
-				res.output_values = new Array(dimOut);
-				for(let j = 0; j < dimOut; j++) {
-					res.output_values[j] = 0.0;
-				}
+                res.output_values = this.modelResults.output_values.slice(0);
+                res.output_covariance = this.modelResults.output_covariance.slice(0);
 
-                let outCovarSize;
-                if(this.model.configuration.default_parameters.covariance_mode == 0) { // full
-                    outCovarSize = dimOut * dimOut;
-                }
-                else { // diagonal
-                    outCovarSize = dimOut;
-                }
-                res.output_covariance = new Array(outCovarSize);
-
-                // add to global model results object :
+                // now add this singleModelResults object to the global modelResults object :
 
 				this.modelResults.singleClassGmmModelResults.push(res);
 			}
