@@ -6,7 +6,7 @@ export default class GmmDecoder {
 		const defaults = {
 			likelihoodWindow: 5
 		};
-		let params =Object.assign({}, defaults, options);
+		let params = Object.assign({}, defaults, options);
 
 		this.model = undefined;
 		this.modelResults = undefined;
@@ -94,7 +94,7 @@ export default class GmmDecoder {
             }
 
 
-			for(let i=0; i<model.models.length; i++) {
+			for(let i = 0; i < nmodels; i++) {
 
 				this.modelResults.instant_likelihoods[i] = 0;
 				this.modelResults.smoothed_log_likelihoods[i] = 0;
@@ -111,6 +111,7 @@ export default class GmmDecoder {
 				for(let j = 0; j < this.likelihoodWindow; j++) {
 					res.likelihood_buffer[j] = 1 / this.likelihoodWindow;
 				}
+                res.likelihood_buffer_index = 0;
 
                 // the following variables are used for regression :
 
@@ -136,8 +137,7 @@ export default class GmmDecoder {
 		if(this.model === undefined) return;
 		let res = this.modelResults.singleClassModelResults;
 		for(let i=0; i<this.model.models.length; i++) {
-			res[i].likelihood_buffer = [];
-			res[i].likelihood_buffer.length = this.likelihoodWindow;
+			res[i].likelihood_buffer = new Array(this.likelihoodWindow);
 			for(let j=0; j<this.likelihoodWindow; j++) {
 				res.likelihood_buffer[j] = 1 / this.likelihoodWindow;
 			}

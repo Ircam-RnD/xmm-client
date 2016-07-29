@@ -2,6 +2,8 @@
  *	functions translated from the decoding part of XMM
  */
 
+// TODO : write methods for generating modelResults object
+
 // get the inverse_covariances matrix of each of the GMM classes
 // for each input data, compute the distance of the frame to each of the GMMs
 // with the following equations :
@@ -34,12 +36,7 @@ export const gmmComponentRegression = (observationIn, predictionOut, gaussianCom
 	}
 	else { // diagonal
 		for(let d = 0; d < dimOut; d++) {
-			predictionOut[d] = c.mean[dimIn + d];
-			// is "observationIn[d]" below normal ? or subject to seg fault ?
-			// waiting for Jules' answer to validate / correct ...
-			predictionOut[d] += c.covariance[d + dimIn]
-							 * c.inverse_covariance_input[d]
-							 * (observationIn[d] - c.mean[d]);
+			predictionOut[d] = c.covariance[d + dimIn];
 		}
 	}
 	//return predictionOut;
@@ -292,8 +289,12 @@ export const gmmLikelihood = (observationIn, singleClassGmmModel, singleClassGmm
 
 	// as in xmm::SingleClassGMM::updateResults :
 	// ------------------------------------------
-	res.likelihood_buffer.unshift(likelihood);
-	res.likelihood_buffer.length--;
+	//res.likelihood_buffer.unshift(likelihood);
+	//res.likelihood_buffer.length--;
+	// THIS IS BETTER (circular buffer)
+	res.likelihood_buffer[res.likelihood_buffer_index] = likelihood;
+	res.likelihood_buffer_index
+		= (res.likelihood_buffer_index + 1) % res.likelihood_buffer.length;
 	// sum all array values :
 	res.log_likelihood = res.likelihood_buffer.reduce((a, b) => a + b, 0);
 	res.log_likelihood /= res.likelihood_buffer.length;
@@ -352,9 +353,11 @@ export const gmmLikelihoods = (observation, gmmModel, gmmModelResults) => {
 		let dimIn = params.dimension_input;
 		let dimOut = dim - dimIn;
 
-		if(config.multiClass_regression_estimator === 0) { // likeliest (default in XMM)
-			res.output_values = res.singleClassModelResults[res.likeliest].output_values;
-			res.output_covariance = res.singleClassModelResults[res.likeliest].output_covariance;			
+		if(config.multiClass_regression_estimator === 0) { // likeliest
+			res.output_values
+				= res.singleClassModelResults[res.likeliest].output_values;
+			res.output_covariance
+				= res.singleClassModelResults[res.likeliest].output_covariance;			
 		}
 		else { // mixture
 			// zero-fill output_values and output_covariance
