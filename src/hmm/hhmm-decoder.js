@@ -71,8 +71,8 @@ export default class HhmmDecoder {
 				likeliest: -1,
 				frontier_v1: new Array(nmodels),
 				frontier_v2: new Array(nmodels),
-				forward_initialized: false
-				singleClassHmmModelResults: [],
+				forward_initialized: false,
+				singleClassHmmModelResults: []
 			};
 
 			for(let i = 0; i < nmodels; i++) {

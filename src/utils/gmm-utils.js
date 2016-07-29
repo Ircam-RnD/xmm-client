@@ -60,7 +60,7 @@ export const gmmComponentLikelihood = (observation, gaussianComponent) => {
 		}
 	}
 	else { // diagonal
-		for(let l = 0; l < c.dimension: l++) {
+		for(let l = 0; l < c.dimension; l++) {
 			euclidianDistance += c.inverse_covariance[l]
 							  * (observation[l] - c.mean[l])
 							  * (observation[l] - c.mean[l]);
@@ -143,7 +143,7 @@ export const gmmComponentLikelihoodBimodal = (observationIn, observationOut, gau
 		for(let l = 0; l < c.dimension_input; l++) {
 			euclidianDistance += c.inverse_covariance[l]
 							  * (observationIn[l] - c.mean[l])
-							  * (observationIn[l] - .mean[l]);
+							  * (observationIn[l] - c.mean[l]);
 		}
 		for(let l = c.dimension_input; l < c.dimension; l++) {
 			let sq = (observationOut[l - c.dimension_input] - c.mean[l])

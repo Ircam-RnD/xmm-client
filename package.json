@@ -1,14 +1,15 @@
 {
-  "name": "xmm-server",
+  "name": "xmm-client",
   "version": "0.0.1",
   "description": "server-side machine learning based on XMM",
   "main": "dist/index.js",
   "license": "BSD-3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ircam-rnd/xmm-server"
+    "url": "https://josephlarralde@bitbucket.org/josephlarralde/xmm-client"
   },
-  "homepage": "https://github.com/ircam-rnd/xmm-server",
+  "private": true,
+  "homepage": "https://josephlarralde@bitbucket.org/josephlarralde/xmm-client",
   "scripts": {
     "bundle": "node ./bin/runner --bundle",
     "transpile": "node ./bin/runner --transpile",
@@ -21,8 +22,7 @@
     "devel": true
   },
   "dependencies": {
-    "babel-runtime": "^6.6.1",
-    "ws": "^0.7.1"
+    "babel-runtime": "^6.6.1"
   },
   "devDependencies": {
     "babel-core": "^6.6.5",

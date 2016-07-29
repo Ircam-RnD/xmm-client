@@ -193,7 +193,7 @@ export const hmmForwardUpdate = (observationIn, singleClassHmmModel, singleClass
 	for(let i = 0; i < nstates; i++) {
 		mRes.alpha[i] = 0;
 		if(m.parameters.transition_mode === 0) { // ergodic
-			for(int j = 0; j < nstates; j++) {
+			for(let j = 0; j < nstates; j++) {
 				mRes.alpha[i] += mRes.previous_alpha[j]
 							  * mRes.transition[j * nstates+ i];
 			}

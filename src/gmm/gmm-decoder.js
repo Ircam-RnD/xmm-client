@@ -31,12 +31,12 @@ export default class GmmDecoder {
 		//}
 		//this.output();
 
-		const lklhds = this.modelResults.smoothed_normalized_likelihoods.slice(0);
-		const lklst = 'unknown';
+		let lklhds = this.modelResults.smoothed_normalized_likelihoods.slice(0);
+		let lklst = 'unknown';
 		if(this.modelResults.likeliest > -1) {
 			lklst = this.model.models[this.modelResults.likeliest].label;
 		}
-		const results = {
+		let results = {
 			likeliest: lklst,
 			likelihoods: lklhds			
 		}
@@ -144,9 +144,9 @@ export default class GmmDecoder {
 		}
 	}
 
-	set varianceOffset() {
+	//set varianceOffset() {
 		// not used for now (need to implement updateInverseCovariance method)
-	}
+	//}
 
 	//=================== GETTERS =====================//
 
