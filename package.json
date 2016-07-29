@@ -6,10 +6,10 @@
   "license": "BSD-3",
   "repository": {
     "type": "git",
-    "url": "https://josephlarralde@bitbucket.org/josephlarralde/xmm-client"
+    "url": "https://github.com/josephlarralde/xmm-client"
   },
   "private": true,
-  "homepage": "https://josephlarralde@bitbucket.org/josephlarralde/xmm-client",
+  "homepage": "https://github.com/josephlarralde/xmm-client",
   "scripts": {
     "bundle": "node ./bin/runner --bundle",
     "transpile": "node ./bin/runner --transpile",
