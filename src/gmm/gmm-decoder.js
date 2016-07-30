@@ -19,7 +19,7 @@ export default class GmmDecoder {
 			return;
 		}
 
-		gmmUtils.gmmLikelihoods(observation, this.model, this.modelResults);			
+		gmmUtils.gmmFilter(observation, this.model, this.modelResults);			
 
 		//================ LFO specific :
 		//gmmLikelihoods(frame, this.model, this.modelResults);			
@@ -41,10 +41,11 @@ export default class GmmDecoder {
 			likelihoods: lklhds			
 		}
 
-		// do something for regression here (add regression results to results) :
+		// add regression results to global results if bimodal :
 		if(this.model.shared_parameters.bimodal) {
             results.output_values = this.modelResults.output_values.slice(0);
-            // results.output_covariance = this.modelResults.output_covariance.slice(0);
+            // results.output_covariance
+            //     = this.modelResults.output_covariance.slice(0);
 		}
 
 		resultsFunction(results);
@@ -61,7 +62,8 @@ export default class GmmDecoder {
 		// test if model is valid here (TODO : write a better test)
 		if(model.models !== undefined) {
 			this.model = model;
-			let nmodels = model.models.length;
+            let m = this.model;
+			let nmodels = m.models.length;
 			this.modelResults = {
 				instant_likelihoods: new Array(nmodels),
 				smoothed_log_likelihoods: new Array(nmodels),
@@ -74,7 +76,7 @@ export default class GmmDecoder {
 
             // the following variables are used for regression :
 
-            let params = this.model.shared_parameters;
+            let params = m.shared_parameters;
             let dimOut = params.dimension - params.dimension_input;
             this.modelResults.output_values = new Array(dimOut);
             for(let i = 0; i < dimOut; i++) {
@@ -82,10 +84,11 @@ export default class GmmDecoder {
             }
 
             let outCovarSize;
-            if(this.model.configuration.default_parameters.covariance_mode == 0) { // full
+            //------------------------------------------------------------- full
+            if(m.configuration.default_parameters.covariance_mode == 0) {
                 outCovarSize = dimOut * dimOut;
-            }
-            else { // diagonal
+            //--------------------------------------------------------- diagonal
+            } else {
                 outCovarSize = dimOut;
             }
             this.modelResults.output_covariance = new Array(outCovarSize);
@@ -115,15 +118,17 @@ export default class GmmDecoder {
 
                 // the following variables are used for regression :
 
-				res.beta = new Array(this.model.models[i].components.length);
+				res.beta = new Array(m.models[i].components.length);
 				for(let j = 0; j < res.beta.length; j++) {
 					res.beta[j] = 1 / res.beta.length;
 				}
-				
-                res.output_values = this.modelResults.output_values.slice(0);
-                res.output_covariance = this.modelResults.output_covariance.slice(0);
+                res.output_values
+                    = this.modelResults.output_values.slice(0);
+                res.output_covariance
+                    = this.modelResults.output_covariance.slice(0);
 
-                // now add this singleModelResults object to the global modelResults object :
+                // now add this singleModelResults object
+                // to the global modelResults object :
 
 				this.modelResults.singleClassGmmModelResults.push(res);
 			}
@@ -145,7 +150,9 @@ export default class GmmDecoder {
 	}
 
 	//set varianceOffset() {
-		// not used for now (need to implement updateInverseCovariance method)
+		/*
+        not used for now (need to implement updateInverseCovariance method)
+        */
 	//}
 
 	//=================== GETTERS =====================//

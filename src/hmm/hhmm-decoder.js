@@ -1,4 +1,4 @@
-import * as gmmUtils from '../utils/gmm-utils';
+//import * as gmmUtils from '../utils/gmm-utils';
 import * as hhmmUtils from '../utils/hhmm-utils';
 
 export default class HhmmDecoder {
@@ -20,11 +20,47 @@ export default class HhmmDecoder {
 			return;
 		}
 
-		// could I do that ? (don't think it's the best idea)
-		// (also change gmm-decoder so that both are consistent)
+		hhmmUtils.hhmmFilter(observation, this.model, this.modelResults);
 
-		// HhmmUtils.HhmmLikelihoods(observation, this.model, this.modelResults);			
+		// TODO :  fill results with relevant modelResults fields
+		let results = {};
 
+		resultsFunction(results);
+		// OR :
+		// return results;
+
+
+		// THIS SHOULD BE DESTROYED (OLD GARBAGE DONE BY hhmmFilter)		
+		/*
+		//--------------------------------------------------------- hierarchical
+		if(this.model.configuration.default_parameters.hierarchical) {
+			if(this.modelResults.forward_initialized) {
+				hhmmUtils.forwardUpdate(
+					observation, this.model, this.modelResults
+				);
+			}
+			else {
+				hhmmUtils.forwardInit(
+					observation, this.model, this.modelResults
+				);
+			}
+		}
+		//----------------------------------------------------- non-hierarchical
+		else { // non-hierarchical
+			for(let i = 0; i < this.model.models.length; i++) {
+				hhmmUtils.this.modelResults
+			}
+		}
+
+		// compute time progression
+		for(let i = 0; i < this.model.models.length; i++) {
+			hhmmUtils.hmmUpdateAlphaWindow(
+				this.model.models[i],
+				this.modelResults.singleClassHmmModelResults[i]
+			);
+			hhmmUtils.hmmUpdateResults();
+		}
+		*/
 	}
 
 	reset() {
@@ -44,23 +80,11 @@ export default class HhmmDecoder {
 			console.log(model);
 
 			this.model = model;
-			let nmodels = model.models.length;
+			let m = this.model;
+			let nmodels = m.models.length;
 
-			let nstatesGlobal = model.configuration.default_parameters.states;
+			let nstatesGlobal = m.configuration.default_parameters.states;
 			this.params.frameSize = nstatesGlobal;
-
-			// this.prior = new Array(nmodels);
-			// this.exit_transition = new Array(nmodels);
-			// this.transition = new Array(nmodels);
-			// for(let i=0; i<nmodels; i++) {
-			// 	this.transition[i] = new Array(nmodels);
-			// }
-
-			// this.frontier_v1 = new Array(nmodels);
-			// this.frontier_v2 = new Array(nmodels);
-			// this.forward_initialized = false;
-
-			//this.results = {};
 
 			this.modelResults = {
 				instant_likelihoods: new Array(nmodels),
@@ -75,6 +99,28 @@ export default class HhmmDecoder {
 				singleClassHmmModelResults: []
 			};
 
+			// move output_values / output_covariance here for regression
+			// and dupe (.slice(0)) them in sub-modelResults
+            let params = m.shared_parameters;
+            let dimOut = params.dimension - params.dimension_input;
+            this.modelResults.output_values = new Array(dimOut);
+            for(let i = 0; i < dimOut; i++) {
+                this.modelResults.output_values[i] = 0.0;
+            }
+
+            let outCovarSize;
+            if(m.configuration.default_parameters.covariance_mode
+            	== 0) { // full
+                outCovarSize = dimOut * dimOut;
+            }
+            else { // diagonal
+                outCovarSize = dimOut;
+            }
+            this.modelResults.output_covariance = new Array(outCovarSize);
+            for(let i = 0; i < dimOut; i++) {
+                this.modelResults.output_covariance[i] = 0.0;
+            }
+
 			for(let i = 0; i < nmodels; i++) {
 
 				this.modelResults.instant_likelihoods[i] = 0;
@@ -83,7 +129,7 @@ export default class HhmmDecoder {
 				this.modelResults.instant_normalized_likelihoods[i] = 0;
 				this.modelResults.smoothed_normalized_likelihoods[i] = 0;
 
-				let nstates = this.model.models[i].parameters.states;
+				let nstates = m.models[i].parameters.states;
 
 				let alpha_h = new Array(3);
 				for(let j=0; j<3; j++) {
@@ -98,7 +144,7 @@ export default class HhmmDecoder {
 					alpha[j] = 0;
 				}
 
-				let winSize = this.model.shared_parameters.likelihood_window
+				let winSize = m.shared_parameters.likelihood_window
 				let likelihood_buffer = new Array(winSize);
 				for(let j = 0; j < winSize; j++) {
 					likelihood_buffer[j] = 0.0;
@@ -106,7 +152,7 @@ export default class HhmmDecoder {
 
 				let hmmRes = {
 					hierarchical:
-						this.model.configuration.default_parameters.hierarchical,
+						m.configuration.default_parameters.hierarchical,
 					instant_likelihood: 0,
 					log_likelihood: 0,
 					// for circular buffer implementation
@@ -133,29 +179,16 @@ export default class HhmmDecoder {
 					window_minindex: 0,
 					window_maxindex: 0,
 					window_normalization_constant: 0,
+
+					// for non-hierarchical mode
+					forward_initialized: false,
 					
 					singleClassGmmModelResults: []	// states
 				};
 
-	            let params = this.model.shared_parameters;
-	            let dimOut = params.dimension - params.dimension_input;
-	            hmmRes.output_values = new Array(dimOut);
-	            for(let i = 0; i < dimOut; i++) {
-	                hmmRes.output_values[i] = 0.0;
-	            }
-
-	            let outCovarSize;
-	            if(this.model.configuration.default_parameters.covariance_mode
-	            	== 0) { // full
-	                outCovarSize = dimOut * dimOut;
-	            }
-	            else { // diagonal
-	                outCovarSize = dimOut;
-	            }
-	            hmmRes.output_covariance = new Array(outCovarSize);
-	            for(let i = 0; i < dimOut; i++) {
-	                hmmRes.output_covariance[i] = 0.0;
-	            }
+				hmmRes.output_values = this.modelResults.output_values.slice(0);
+				hmmRes.output_covariance
+					= this.modelResults.output_covariance.slice(0);
 
 				// ADD INDIVIDUAL STATES (GMMs)
 				for(let j = 0; j < nstates; j++) {
@@ -170,7 +203,8 @@ export default class HhmmDecoder {
 					}
 					
 	                gmmRes.output_values = hmmRes.output_values.slice(0);
-	                gmmRes.output_covariance = hmmRes.output_covariance.slice(0);
+	                gmmRes.output_covariance
+	                	= hmmRes.output_covariance.slice(0);
 
 					hmmRes.singleClassGmmModelResults.push(gmmRes);
 				}
