@@ -13,44 +13,50 @@ export default class GmmDecoder {
     this.likelihoodWindow = params.likelihoodWindow;
   }
 
-  filter(observation, resultsFunction) {
+  filter(observation, resultsCallback) {
     if(this.model === undefined) {
       console.log("no model loaded");
       return;
     }
 
-    gmmUtils.gmmFilter(observation, this.model, this.modelResults);         
+    let err = null;
+    let results = null;
 
-    //================ LFO specific :
-    //gmmLikelihoods(frame, this.model, this.modelResults);         
-    //this.time = time;
-    //this.metaData = metaData;
-    //const outFrame = this.outFrame;
-    //for(let i=0; i<this.model.models.length; i++) {
-    //  outFrame[i] = this.modelResults.smoothed_normalized_likelihoods[i];
-    //}
-    //this.output();
+    try {
+      gmmUtils.gmmFilter(observation, this.model, this.modelResults);         
 
-    let lklhds = this.modelResults.smoothed_normalized_likelihoods.slice(0);
-    let lklst = 'unknown';
-    if(this.modelResults.likeliest > -1) {
-      lklst = this.model.models[this.modelResults.likeliest].label;
+      //================ LFO specific :
+      //gmmLikelihoods(frame, this.model, this.modelResults);         
+      //this.time = time;
+      //this.metaData = metaData;
+      //const outFrame = this.outFrame;
+      //for(let i=0; i<this.model.models.length; i++) {
+      //  outFrame[i] = this.modelResults.smoothed_normalized_likelihoods[i];
+      //}
+      //this.output();
+
+      // create results object from relevant modelResults values :
+
+      const lklst = (this.modelResults.likeliest > -1)
+                  ? this.model.models[this.modelResults.likeliest].label
+                  : 'unknown';
+      const lklhds = this.modelResults.smoothed_normalized_likelihoods.slice(0);
+      results = {
+        likeliest: lklst,
+        likelihoods: lklhds         
+      }
+
+      // add regression results to global results if bimodal :
+      if(this.model.shared_parameters.bimodal) {
+        results.output_values = this.modelResults.output_values.slice(0);
+        // results.output_covariance
+        //     = this.modelResults.output_covariance.slice(0);
+      }
+    } catch (e) {
+      err = 'problem occured during filtering : ' + e;
     }
-    let results = {
-      likeliest: lklst,
-      likelihoods: lklhds         
-    }
 
-    // add regression results to global results if bimodal :
-    if(this.model.shared_parameters.bimodal) {
-      results.output_values = this.modelResults.output_values.slice(0);
-      // results.output_covariance
-      //     = this.modelResults.output_covariance.slice(0);
-    }
-
-    resultsFunction(results);
-    // OR :
-    // return results;
+    resultsCallback(err, results);
   }
 
   //=================== SETTERS =====================//
@@ -62,8 +68,8 @@ export default class GmmDecoder {
     // test if model is valid here (TODO : write a better test)
     if(model.models !== undefined) {
       this.model = model;
-      let m = this.model;
-      let nmodels = m.models.length;
+      const m = this.model;
+      const nmodels = m.models.length;
       this.modelResults = {
         instant_likelihoods: new Array(nmodels),
         smoothed_log_likelihoods: new Array(nmodels),
@@ -76,8 +82,8 @@ export default class GmmDecoder {
 
       // the following variables are used for regression :
 
-      let params = m.shared_parameters;
-      let dimOut = params.dimension - params.dimension_input;
+      const params = m.shared_parameters;
+      const dimOut = params.dimension - params.dimension_input;
       this.modelResults.output_values = new Array(dimOut);
       for(let i = 0; i < dimOut; i++) {
         this.modelResults.output_values[i] = 0.0;
@@ -105,12 +111,12 @@ export default class GmmDecoder {
         this.modelResults.instant_normalized_likelihoods[i] = 0;
         this.modelResults.smoothed_normalized_likelihoods[i] = 0;
 
-        let res = {};
-        res.instant_likelihood = 0;
-        res.log_likelihood = 0;
+        const res = {
+          instant_likelihood: 0,
+          log_likelihood: 0
+        };
 
         res.likelihood_buffer = new Array(this.likelihoodWindow);
-        res.likelihood_buffer.length = this.likelihoodWindow;
         for(let j = 0; j < this.likelihoodWindow; j++) {
           res.likelihood_buffer[j] = 1 / this.likelihoodWindow;
         }
@@ -122,10 +128,8 @@ export default class GmmDecoder {
         for(let j = 0; j < res.beta.length; j++) {
           res.beta[j] = 1 / res.beta.length;
         }
-        res.output_values
-          = this.modelResults.output_values.slice(0);
-        res.output_covariance
-          = this.modelResults.output_covariance.slice(0);
+        res.output_values = this.modelResults.output_values.slice(0);
+        res.output_covariance = this.modelResults.output_covariance.slice(0);
 
         // now add this singleModelResults object
         // to the global modelResults object :
@@ -140,7 +144,7 @@ export default class GmmDecoder {
   set likelihoodWindow(newWindowSize) {
     this.likelihoodWindow = newWindowSize;
     if(this.model === undefined) return;
-    let res = this.modelResults.singleClassModelResults;
+    const res = this.modelResults.singleClassModelResults;
     for(let i=0; i<this.model.models.length; i++) {
       res[i].likelihood_buffer = new Array(this.likelihoodWindow);
       for(let j=0; j<this.likelihoodWindow; j++) {
