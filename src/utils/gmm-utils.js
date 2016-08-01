@@ -1,5 +1,5 @@
 /**
- *	functions translated from the decoding part of XMM
+ *  functions translated from the decoding part of XMM
  */
 
 // TODO : write methods for generating modelResults object
@@ -15,169 +15,169 @@
 
 // from xmmGaussianDistribution::regression
 export const gmmComponentRegression = (obsIn, predictOut, component) => {
-	let c = component;
-	let dim = c.dimension;
-	let dimIn = c.dimension_input;
-	let dimOut = dim - dimIn;
-	//let predictedOut = [];
-	predictOut = new Array(dimOut);
+  let c = component;
+  let dim = c.dimension;
+  let dimIn = c.dimension_input;
+  let dimOut = dim - dimIn;
+  //let predictedOut = [];
+  predictOut = new Array(dimOut);
 
-	//--------------------------------------------------------------------- full
-	if (c.covariance_mode === 0) {
-		for (let d = 0; d < dimOut; d++) {
-			predictOut[d] = c.mean[dimIn + d];
-			for (let e = 0; e < dimIn; e++) {
-				let tmp = 0.0;
-				for (let f = 0; f < dimIn; f++) {
-					tmp += c.inverse_covariance_input[e * dimIn + f] *
-						   (obsIn[f] - c.mean[f]);
-				}
-				predictOut[d] += c.covariance[(d + dimIn) * dim + e] * tmp;
-			}
-		}
-	//----------------------------------------------------------------- diagonal
-	} else {
-		for (let d = 0; d < dimOut; d++) {
-			predictOut[d] = c.covariance[d + dimIn];
-		}
-	}
-	//return predictionOut;
+  //--------------------------------------------------------------------- full
+  if (c.covariance_mode === 0) {
+    for (let d = 0; d < dimOut; d++) {
+      predictOut[d] = c.mean[dimIn + d];
+      for (let e = 0; e < dimIn; e++) {
+        let tmp = 0.0;
+        for (let f = 0; f < dimIn; f++) {
+          tmp += c.inverse_covariance_input[e * dimIn + f] *
+               (obsIn[f] - c.mean[f]);
+        }
+        predictOut[d] += c.covariance[(d + dimIn) * dim + e] * tmp;
+      }
+    }
+  //----------------------------------------------------------------- diagonal
+  } else {
+    for (let d = 0; d < dimOut; d++) {
+      predictOut[d] = c.covariance[d + dimIn];
+    }
+  }
+  //return predictionOut;
 };
 
 
 export const gmmComponentLikelihood = (obsIn, component) => {
-	let c = component;
-	// if(c.covariance_determinant === 0) {
-	// 	return undefined;
-	// }
-	let euclidianDistance = 0.0;
+  let c = component;
+  // if(c.covariance_determinant === 0) {
+  //  return undefined;
+  // }
+  let euclidianDistance = 0.0;
 
-	//--------------------------------------------------------------------- full
-	if (c.covariance_mode === 0) {
-		for (let l = 0; l < c.dimension; l++) {
-			let tmp = 0.0;
-			for (let k = 0; k < c.dimension; k++) {
-				tmp += c.inverse_covariance[l * c.dimension + k]
-					* (obsIn[k] - c.mean[k]);
-			}
-			euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
-		}
-	//----------------------------------------------------------------- diagonal
-	} else {
-		for (let l = 0; l < c.dimension; l++) {
-			euclidianDistance += c.inverse_covariance[l] *
-							  	 (obsIn[l] - c.mean[l]) *
-								 (obsIn[l] - c.mean[l]);
-		}
-	}
+  //--------------------------------------------------------------------- full
+  if (c.covariance_mode === 0) {
+    for (let l = 0; l < c.dimension; l++) {
+      let tmp = 0.0;
+      for (let k = 0; k < c.dimension; k++) {
+        tmp += c.inverse_covariance[l * c.dimension + k]
+          * (obsIn[k] - c.mean[k]);
+      }
+      euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
+    }
+  //----------------------------------------------------------------- diagonal
+  } else {
+    for (let l = 0; l < c.dimension; l++) {
+      euclidianDistance += c.inverse_covariance[l] *
+                 (obsIn[l] - c.mean[l]) *
+                 (obsIn[l] - c.mean[l]);
+    }
+  }
 
-	let p = Math.exp(-0.5 * euclidianDistance) /
-			Math.sqrt(
-				c.covariance_determinant *
-				Math.pow(2 * Math.PI, c.dimension)
-			);
+  let p = Math.exp(-0.5 * euclidianDistance) /
+      Math.sqrt(
+        c.covariance_determinant *
+        Math.pow(2 * Math.PI, c.dimension)
+      );
 
-	if (p < 1e-180 || isNaN(p) || isNaN(Math.abs(p))) {
-		p = 1e-180;
-	}
-	return p;
+  if (p < 1e-180 || isNaN(p) || isNaN(Math.abs(p))) {
+    p = 1e-180;
+  }
+  return p;
 };
 
 
 export const gmmComponentLikelihoodInput = (obsIn, component) => {
-	let c = component;
-	// if(c.covariance_determinant === 0) {
-	// 	return undefined;
-	// }
-	let euclidianDistance = 0.0;
-	//--------------------------------------------------------------------- full
-	if (c.covariance_mode === 0) {
-		for (let l = 0; l < c.dimension_input; l++) {
-			let tmp = 0.0;
-			for (let k = 0; k < c.dimension_input; k++) {
-				tmp += c.inverse_covariance_input[l * c.dimension_input + k] *
-					   (obsIn[k] - c.mean[k]);
-			}
-			euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
-		}
-	//----------------------------------------------------------------- diagonal
-	} else {
-		for (let l = 0; l < c.dimension_input; l++) {
-			// or would it be c.inverse_covariance_input[l] ?
-			// sounds logic ... but, according to Jules (cf e-mail),
-			// not really important.
-			euclidianDistance += c.inverse_covariance_input[l] *
-							  	 (obsIn[l] - c.mean[l]) *
-							  	 (obsIn[l] - c.mean[l]);
-		}
-	}
+  let c = component;
+  // if(c.covariance_determinant === 0) {
+  //  return undefined;
+  // }
+  let euclidianDistance = 0.0;
+  //--------------------------------------------------------------------- full
+  if (c.covariance_mode === 0) {
+    for (let l = 0; l < c.dimension_input; l++) {
+      let tmp = 0.0;
+      for (let k = 0; k < c.dimension_input; k++) {
+        tmp += c.inverse_covariance_input[l * c.dimension_input + k] *
+             (obsIn[k] - c.mean[k]);
+      }
+      euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
+    }
+  //----------------------------------------------------------------- diagonal
+  } else {
+    for (let l = 0; l < c.dimension_input; l++) {
+      // or would it be c.inverse_covariance_input[l] ?
+      // sounds logic ... but, according to Jules (cf e-mail),
+      // not really important.
+      euclidianDistance += c.inverse_covariance_input[l] *
+                 (obsIn[l] - c.mean[l]) *
+                 (obsIn[l] - c.mean[l]);
+    }
+  }
 
-	let p = Math.exp(-0.5 * euclidianDistance) /
-			Math.sqrt(
-				c.covariance_determinant_input *
-				Math.pow(2 * Math.PI, c.dimension_input)
-			);
+  let p = Math.exp(-0.5 * euclidianDistance) /
+      Math.sqrt(
+        c.covariance_determinant_input *
+        Math.pow(2 * Math.PI, c.dimension_input)
+      );
 
-	if (p < 1e-180 ||isNaN(p) || isNaN(Math.abs(p))) {
-		p = 1e-180;
-	}
-	return p;
+  if (p < 1e-180 ||isNaN(p) || isNaN(Math.abs(p))) {
+    p = 1e-180;
+  }
+  return p;
 };
 
 
 export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, component) => {
-	let c = gaussianComponent;
-	// if(c.covariance_determinant === 0) {
-	// 	return undefined;
-	// }
-	let dim = c.dimension;
-	let dimIn = c.dimension_input;
-	let dimOut = dim - dimIn;
-	let euclidianDistance = 0.0;
+  let c = gaussianComponent;
+  // if(c.covariance_determinant === 0) {
+  //  return undefined;
+  // }
+  let dim = c.dimension;
+  let dimIn = c.dimension_input;
+  let dimOut = dim - dimIn;
+  let euclidianDistance = 0.0;
 
-	//--------------------------------------------------------------------- full
-	if (c.covariance_mode === 0) {
-		for (let l = 0; l < dim; l++) {
-			let tmp = 0.0;
-			for (let k = 0; k < c.dimension_input; k++) {
-				tmp += c.inverse_covariance[l * dim + k] *
-					   (obsIn[k] - c.mean[k]);
-			}
-			for (let k =  0; k < dimOut; k++) {
-				tmp += c.inverse_covariance[l * dim + dimIn + k] *
-					   (obsOut[k] - c.mean[dimIn +k]);
-			}
-			if (l < dimIn) {
-				euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
-			} else {
-				euclidianDistance += (obsOut[l - dimIn] - c.mean[l]) *
-									 tmp;
-			}
-		}
-	//----------------------------------------------------------------- diagonal
-	} else {
-		for (let l = 0; l < dimIn; l++) {
-			euclidianDistance += c.inverse_covariance[l] *
-							  	 (obsIn[l] - c.mean[l]) *
-							  	 (obsIn[l] - c.mean[l]);
-		}
-		for (let l = c.dimension_input; l < c.dimension; l++) {
-			let sq = (obsOut[l - dimIn] - c.mean[l]) *
-				   	 (obsOut[l - dimIn] - c.mean[l]);
-			euclidianDistance += c.inverse_covariance[l] * sq;
-		}
-	}
+  //--------------------------------------------------------------------- full
+  if (c.covariance_mode === 0) {
+    for (let l = 0; l < dim; l++) {
+      let tmp = 0.0;
+      for (let k = 0; k < c.dimension_input; k++) {
+        tmp += c.inverse_covariance[l * dim + k] *
+             (obsIn[k] - c.mean[k]);
+      }
+      for (let k =  0; k < dimOut; k++) {
+        tmp += c.inverse_covariance[l * dim + dimIn + k] *
+             (obsOut[k] - c.mean[dimIn +k]);
+      }
+      if (l < dimIn) {
+        euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
+      } else {
+        euclidianDistance += (obsOut[l - dimIn] - c.mean[l]) *
+                   tmp;
+      }
+    }
+  //----------------------------------------------------------------- diagonal
+  } else {
+    for (let l = 0; l < dimIn; l++) {
+      euclidianDistance += c.inverse_covariance[l] *
+                 (obsIn[l] - c.mean[l]) *
+                 (obsIn[l] - c.mean[l]);
+    }
+    for (let l = c.dimension_input; l < c.dimension; l++) {
+      let sq = (obsOut[l - dimIn] - c.mean[l]) *
+           (obsOut[l - dimIn] - c.mean[l]);
+      euclidianDistance += c.inverse_covariance[l] * sq;
+    }
+  }
 
-	let p = Math.exp(-0.5 * euclidianDistance) /
-			Math.sqrt(
-				c.covariance_determinant *
-				Math.pow(2 * Math.PI, c.dimension)
-			);
+  let p = Math.exp(-0.5 * euclidianDistance) /
+      Math.sqrt(
+        c.covariance_determinant *
+        Math.pow(2 * Math.PI, c.dimension)
+      );
 
-	if (p < 1e-180 || isNaN(p) || isNaN(Math.abs(p))) {
-		p = 1e-180;
-	}
-	return p;
+  if (p < 1e-180 || isNaN(p) || isNaN(Math.abs(p))) {
+    p = 1e-180;
+  }
+  return p;
 };
 
 
@@ -186,154 +186,154 @@ export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, component) => {
 // ================================= //
 
 export const gmmRegression = (obsIn, singleGmm, singleGmmRes) => {
-	let m = singleGmm;
-	let mRes = singleGmmResults;
+  let m = singleGmm;
+  let mRes = singleGmmResults;
 
-	let dim = m.components[0].dimension;
-	let dimIn = m.components[0].dimension_input;
-	let dimOut = dim - dimIn;
+  let dim = m.components[0].dimension;
+  let dimIn = m.components[0].dimension_input;
+  let dimOut = dim - dimIn;
 
-	mRes.output_values = new Array(dimOut);
-	for (let i = 0; i < dimOut; i++) {
-		mRes.output_values[i] = 0.0;
-	}
+  mRes.output_values = new Array(dimOut);
+  for (let i = 0; i < dimOut; i++) {
+    mRes.output_values[i] = 0.0;
+  }
 
-	let outCovarSize;
-	//--------------------------------------------------------------------- full
-	if (m.parameters.covariance_mode === 0) {
-		outCovarSize = dimOut * dimOut;
-	//----------------------------------------------------------------- diagonal
-	} else {
-		outCovarSize = dimOut;
-	}
-	mRes.output_covariance = new Array(outCovarSize);
-	for (let i = 0; i < outCovarSize; i++) {
-		mRes.output_covariance[i] = 0.0;
-	}
+  let outCovarSize;
+  //--------------------------------------------------------------------- full
+  if (m.parameters.covariance_mode === 0) {
+    outCovarSize = dimOut * dimOut;
+  //----------------------------------------------------------------- diagonal
+  } else {
+    outCovarSize = dimOut;
+  }
+  mRes.output_covariance = new Array(outCovarSize);
+  for (let i = 0; i < outCovarSize; i++) {
+    mRes.output_covariance[i] = 0.0;
+  }
 
-	let tmpPredictedOutput = new Array(dimOut);
-	for (let i = 0; i < dimOut; i++) {
-		tmpPredictedOutput[i] = 0.0;
-	}
+  let tmpPredictedOutput = new Array(dimOut);
+  for (let i = 0; i < dimOut; i++) {
+    tmpPredictedOutput[i] = 0.0;
+  }
 
-	for (let c = 0; c < m.components.length; c++) {
-		gmmComponentRegression(
-			obsIn, tmpPredictedOutput, m.components[c]
-		);
-		let sqbeta = mRes.beta[c] * mRes.beta[c];
-		for (let d = 0; d < dimOut; d++) {
-			mRes.output_values[d] += mRes.beta[c] * tmpPredictedOutput[d];
-			//------------------------------------------------------------- full
-			if (m.parameters.covariance_mode === 0) {
-				for (let d2 = 0; d2 < dimOut; d2++) {
-					let index = d * dimOut + d2;
-					mRes.output_covariance[index]
-						+= sqbeta * m.components[c].output_covariance[index];
-				}
-			//--------------------------------------------------------- diagonal
-			} else {
-				mRes.output_covariance[d]
-					+= sqbeta * m.components[c].output_covariance[d];
-			}
-		}
-	}
+  for (let c = 0; c < m.components.length; c++) {
+    gmmComponentRegression(
+      obsIn, tmpPredictedOutput, m.components[c]
+    );
+    let sqbeta = mRes.beta[c] * mRes.beta[c];
+    for (let d = 0; d < dimOut; d++) {
+      mRes.output_values[d] += mRes.beta[c] * tmpPredictedOutput[d];
+      //------------------------------------------------------------- full
+      if (m.parameters.covariance_mode === 0) {
+        for (let d2 = 0; d2 < dimOut; d2++) {
+          let index = d * dimOut + d2;
+          mRes.output_covariance[index]
+            += sqbeta * m.components[c].output_covariance[index];
+        }
+      //--------------------------------------------------------- diagonal
+      } else {
+        mRes.output_covariance[d]
+          += sqbeta * m.components[c].output_covariance[d];
+      }
+    }
+  }
 };
 
 
 export const gmmObsProb = (obIn, singleGmm, component = -1) => {
-	let coeffs = singleGmm.mixture_coeffs;
-	//console.log(coeffs);
-	//if(coeffs === undefined) coeffs = [1];
-	let components = singleGmm.components;
-	let p = 0.0;
+  let coeffs = singleGmm.mixture_coeffs;
+  //console.log(coeffs);
+  //if(coeffs === undefined) coeffs = [1];
+  let components = singleGmm.components;
+  let p = 0.0;
 
-	if (component < 0) {
-		for (let c = 0; c < components.length; c++) {
-			p += gmmObsProb(obsIn, singleGmm, c);
-		}
-	} else {
-		p = coeffs[componenr] *
-			gmmComponentLikelihood(obsIn, components[component]);		
-	}
-	return p;
+  if (component < 0) {
+    for (let c = 0; c < components.length; c++) {
+      p += gmmObsProb(obsIn, singleGmm, c);
+    }
+  } else {
+    p = coeffs[componenr] *
+      gmmComponentLikelihood(obsIn, components[component]);       
+  }
+  return p;
 };
 
 
 export const gmmObsProbInput = (obsIn, singleGmm, component = -1) => {
-	let coeffs = singleGmm.mixture_coeffs;
-	let components = singleGmm.components;
-	let p = 0.0;
+  let coeffs = singleGmm.mixture_coeffs;
+  let components = singleGmm.components;
+  let p = 0.0;
 
-	if (component < 0) {
-		for(let c = 0; c < components.length; c++) {
-			p += gmmObsProbInput(obsIn, singleGmm, c);
-		}
-	} else {
-		p = coeffs[component] *
-			gmmComponentLikelihoodInput(obsIn, components[component]);		
-	}
-	return p;
+  if (component < 0) {
+    for(let c = 0; c < components.length; c++) {
+      p += gmmObsProbInput(obsIn, singleGmm, c);
+    }
+  } else {
+    p = coeffs[component] *
+      gmmComponentLikelihoodInput(obsIn, components[component]);      
+  }
+  return p;
 };
 
 
 export const gmmObsProbBimodal = (obsIn, obsOut, singleGmm, component = -1) => {
-	let coeffs = singleGmm.mixture_coeffs;
-	let components = singleGmm.components;
-	let p = 0.0;
+  let coeffs = singleGmm.mixture_coeffs;
+  let components = singleGmm.components;
+  let p = 0.0;
 
-	if (component < 0) {
-		for (let c = 0; c < components.length; c++) {
-			p += gmmObsProbBimodal(obsIn, obsOut, singleGmm, c);
-		}
-	} else {
-		p = coeffs[component] *
-			gmmComponentLikelihoodBimodal(obsIn, obsOut, components[component]);
-	}
-	return p;
+  if (component < 0) {
+    for (let c = 0; c < components.length; c++) {
+      p += gmmObsProbBimodal(obsIn, obsOut, singleGmm, c);
+    }
+  } else {
+    p = coeffs[component] *
+      gmmComponentLikelihoodBimodal(obsIn, obsOut, components[component]);
+  }
+  return p;
 };
 
 
 export const gmmLikelihood = (obsIn, singleGmm, singleGmmRes, obsOut = []) => {
-	let coeffs = singleGmm.mixture_coeffs;
-	let components = singleGmm.components;
-	let mRes = singleGmmRes;
-	let likelihood = 0.0;
-	
-	for (let c = 0; c < components.length; c++) {
-		//-------------------------------------------------------------- bimodal
-		if (singleClassGmmModel.components[c].bimodal) {
-			if (obsOut.length === 0) {
-				mRes.beta[c]
-					= gmmObsProbInput(obsIn, singleGmm, c);
-			} else {
-				mRes.beta[c]
-					= gmmObsProbBimodal(obsIn, obsOut, singleGmm, c);
-			}
-		//------------------------------------------------------------- unimodal
-		} else {
-			mRes.beta[c] = gmmObsProb(obsIn, singleGmm, c);
-		}
-		likelihood += mRes.beta[c];
-	}
-	for (let c = 0; c < coeffs.length; c++) {
-		mRes.beta[c] /= likelihood;
-	}
+  let coeffs = singleGmm.mixture_coeffs;
+  let components = singleGmm.components;
+  let mRes = singleGmmRes;
+  let likelihood = 0.0;
+  
+  for (let c = 0; c < components.length; c++) {
+    //-------------------------------------------------------------- bimodal
+    if (singleClassGmmModel.components[c].bimodal) {
+      if (obsOut.length === 0) {
+        mRes.beta[c]
+          = gmmObsProbInput(obsIn, singleGmm, c);
+      } else {
+        mRes.beta[c]
+          = gmmObsProbBimodal(obsIn, obsOut, singleGmm, c);
+      }
+    //------------------------------------------------------------- unimodal
+    } else {
+      mRes.beta[c] = gmmObsProb(obsIn, singleGmm, c);
+    }
+    likelihood += mRes.beta[c];
+  }
+  for (let c = 0; c < coeffs.length; c++) {
+    mRes.beta[c] /= likelihood;
+  }
 
-	mRes.instant_likelihood = likelihood;
+  mRes.instant_likelihood = likelihood;
 
-	// as in xmm::SingleClassGMM::updateResults :
-	// ------------------------------------------
-	//res.likelihood_buffer.unshift(likelihood);
-	//res.likelihood_buffer.length--;
-	// THIS IS BETTER (circular buffer)
-	mRes.likelihood_buffer[mRes.likelihood_buffer_index] = likelihood;
-	mRes.likelihood_buffer_index
-		= (mRes.likelihood_buffer_index + 1) % mRes.likelihood_buffer.length;
-	// sum all array values :
-	mRes.log_likelihood = mRes.likelihood_buffer.reduce((a, b) => a + b, 0);
-	mRes.log_likelihood /= mRes.likelihood_buffer.length;
+  // as in xmm::SingleClassGMM::updateResults :
+  // ------------------------------------------
+  //res.likelihood_buffer.unshift(likelihood);
+  //res.likelihood_buffer.length--;
+  // THIS IS BETTER (circular buffer)
+  mRes.likelihood_buffer[mRes.likelihood_buffer_index] = likelihood;
+  mRes.likelihood_buffer_index
+    = (mRes.likelihood_buffer_index + 1) % mRes.likelihood_buffer.length;
+  // sum all array values :
+  mRes.log_likelihood = mRes.likelihood_buffer.reduce((a, b) => a + b, 0);
+  mRes.log_likelihood /= mRes.likelihood_buffer.length;
 
-	return likelihood;
+  return likelihood;
 };
 
 
@@ -342,104 +342,104 @@ export const gmmLikelihood = (obsIn, singleGmm, singleGmmRes, obsOut = []) => {
 // ================================= //
 
 export const gmmFilter = (obsIn, gmm, gmmRes) => {
-	let likelihoods = [];
-	let models = gmm.models;
-	let mRes = gmmRes;
+  let likelihoods = [];
+  let models = gmm.models;
+  let mRes = gmmRes;
 
-	let maxLogLikelihood = 0;
-	let normConstInstant = 0;
-	let normConstSmoothed = 0;
+  let maxLogLikelihood = 0;
+  let normConstInstant = 0;
+  let normConstSmoothed = 0;
 
-	for (let i = 0; i < models.length; i++) {
-		let singleRes = mRes.singleClassGmmModelResults[i];
-		mRes.instant_likelihoods[i]
-			= gmmLikelihood(obsIn, models[i], singleRes);
+  for (let i = 0; i < models.length; i++) {
+    let singleRes = mRes.singleClassGmmModelResults[i];
+    mRes.instant_likelihoods[i]
+      = gmmLikelihood(obsIn, models[i], singleRes);
 
-		// as in xmm::GMM::updateResults :
-		// -------------------------------
-		mRes.smoothed_log_likelihoods[i] = singleRes.log_likelihood;
-		mRes.smoothed_likelihoods[i]
-			= Math.exp(mRes.smoothed_log_likelihoods[i]);
-		mRes.instant_normalized_likelihoods[i] = mRes.instant_likelihoods[i];
-		mRes.smoothed_normalized_likelihoods[i] = mRes.smoothed_likelihoods[i];
+    // as in xmm::GMM::updateResults :
+    // -------------------------------
+    mRes.smoothed_log_likelihoods[i] = singleRes.log_likelihood;
+    mRes.smoothed_likelihoods[i]
+      = Math.exp(mRes.smoothed_log_likelihoods[i]);
+    mRes.instant_normalized_likelihoods[i] = mRes.instant_likelihoods[i];
+    mRes.smoothed_normalized_likelihoods[i] = mRes.smoothed_likelihoods[i];
 
-		normConstInstant += mRes.instant_normalized_likelihoods[i];
-		normConstSmoothed += mRes.smoothed_normalized_likelihoods[i];
+    normConstInstant += mRes.instant_normalized_likelihoods[i];
+    normConstSmoothed += mRes.smoothed_normalized_likelihoods[i];
 
-		if (i == 0 || mRes.smoothed_log_likelihoods[i] > maxLogLikelihood) {
-			maxLogLikelihood = mRes.smoothed_log_likelihoods[i];
-			mRes.likeliest = i;
-		}
-	}
+    if (i == 0 || mRes.smoothed_log_likelihoods[i] > maxLogLikelihood) {
+      maxLogLikelihood = mRes.smoothed_log_likelihoods[i];
+      mRes.likeliest = i;
+    }
+  }
 
-	for (let i = 0; i < models.length; i++) {
-		mRes.instant_normalized_likelihoods[i] /= normConstInstant;
-		mRes.smoothed_normalized_likelihoods[i] /= normConstSmoothed;
-	}
+  for (let i = 0; i < models.length; i++) {
+    mRes.instant_normalized_likelihoods[i] /= normConstInstant;
+    mRes.smoothed_normalized_likelihoods[i] /= normConstSmoothed;
+  }
 
-	// if model is bimodal :
-	// ---------------------
-	let params = gmm.shared_parameters;
-	let config = gmm.configuration;
+  // if model is bimodal :
+  // ---------------------
+  let params = gmm.shared_parameters;
+  let config = gmm.configuration;
 
-	if (params.bimodal) {
-		let dim = params.dimension;
-		let dimIn = params.dimension_input;
-		let dimOut = dim - dimIn;
+  if (params.bimodal) {
+    let dim = params.dimension;
+    let dimIn = params.dimension_input;
+    let dimOut = dim - dimIn;
 
-		//------------------------------------------------------------ likeliest
-		if (config.multiClass_regression_estimator === 0) {
-			mRes.output_values
-				= mRes.singleClassModelResults[mRes.likeliest]
-					  .output_values;
-			mRes.output_covariance
-				= mRes.singleClassModelResults[mRes.likeliest]
-					  .output_covariance;			
-		//-------------------------------------------------------------- mixture
-		} else {
-			// zero-fill output_values and output_covariance
-			mRes.output_values = new Array(dimOut);
-			for (let i = 0; i < dimOut; i++) {
-				mRes.output_values[i] = 0.0;
-			}
+    //------------------------------------------------------------ likeliest
+    if (config.multiClass_regression_estimator === 0) {
+      mRes.output_values
+        = mRes.singleClassModelResults[mRes.likeliest]
+            .output_values;
+      mRes.output_covariance
+        = mRes.singleClassModelResults[mRes.likeliest]
+            .output_covariance;           
+    //-------------------------------------------------------------- mixture
+    } else {
+      // zero-fill output_values and output_covariance
+      mRes.output_values = new Array(dimOut);
+      for (let i = 0; i < dimOut; i++) {
+        mRes.output_values[i] = 0.0;
+      }
 
-            let outCovarSize;
-            //------------------------------------------------------------- full
-            if (config.default_parameters.covariance_mode == 0) {
-                outCovarSize = dimOut * dimOut;
-            //--------------------------------------------------------- diagonal
-            } else {
-                outCovarSize = dimOut;
+      let outCovarSize;
+      //------------------------------------------------------------- full
+      if (config.default_parameters.covariance_mode == 0) {
+        outCovarSize = dimOut * dimOut;
+      //--------------------------------------------------------- diagonal
+      } else {
+        outCovarSize = dimOut;
+      }
+      mRes.output_covariance = new Array(outCovarSize);
+      for (let i = 0; i < outCovarSize; i++) {
+        mRes.output_covariance[i] = 0.0;
+      }
+
+      // compute the actual values :
+      for (let i = 0; i < models.length; i++) {
+        let smoothNormLikelihood
+          = mRes.smoothed_normalized_likelihoods[i];
+        let singleRes = mRes.singleClassGmmModelResults[i];
+        for (let d = 0; d < dimOut; i++) {
+          mRes.output_values[d] += smoothNormLikelihood *
+                       singleRes.output_values[d];
+          //----------------------------------------------------- full
+          if (config.default_parameters.covariance_mode === 0) {
+            for (let d2 = 0; d2 < dimOut; d2++) {
+              let index = d * dimOut + d2;
+              mRes.output_covariance[index]
+                += smoothNormLikelihood *
+                   singleRes.output_covariance[index];
             }
-            mRes.output_covariance = new Array(outCovarSize);
-            for (let i = 0; i < outCovarSize; i++) {
-            	mRes.output_covariance[i] = 0.0;
-            }
-
-            // compute the actual values :
-            for (let i = 0; i < models.length; i++) {
-            	let smoothNormLikelihood
-            		= mRes.smoothed_normalized_likelihoods[i];
-            	let singleRes = mRes.singleClassGmmModelResults[i];
-            	for (let d = 0; d < dimOut; i++) {
-            		mRes.output_values[d] += smoothNormLikelihood *
-            								 singleRes.output_values[d];
-        		    //----------------------------------------------------- full
-            		if (config.default_parameters.covariance_mode === 0) {
-            			for (let d2 = 0; d2 < dimOut; d2++) {
-            				let index = d * dimOut + d2;
-            				mRes.output_covariance[index]
-            					+= smoothNormLikelihood *
-            					   singleRes.output_covariance[index];
-            			}
-        		    //------------------------------------------------- diagonal
-            		} else {
-            			mRes.output_covariance[d]
-            				+= smoothNormLikelihood *
-            				   singleRes.output_covariance[d];
-            		}
-            	}
-            }
-		}
-	} /* end if(params.bimodal) */
+          //------------------------------------------------- diagonal
+          } else {
+            mRes.output_covariance[d]
+              += smoothNormLikelihood *
+                 singleRes.output_covariance[d];
+          }
+        }
+      }
+    }
+  } /* end if(params.bimodal) */
 };
