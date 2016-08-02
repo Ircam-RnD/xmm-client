@@ -572,11 +572,11 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
                  m.exitProbabilities[k] * tmp;
       mRes.alpha_h[0][k] = (1 - m.exitProbabilities[k]) * tmp;
 
-      mRes.exit_likelihood    += mRes.alpha_h[1][k] +
-                     mRes.alpha_h[2][k];
+      mRes.exit_likelihood += mRes.alpha_h[1][k] +
+                              mRes.alpha_h[2][k];
       mRes.instant_likelihood += mRes.alpha_h[0][k] +
-                     mRes.alpha_h[1][k] +
-                     mRes.alpha_h[2][k];
+                                 mRes.alpha_h[1][k] +
+                                 mRes.alpha_h[2][k];
 
       norm_const += tmp;
     }
