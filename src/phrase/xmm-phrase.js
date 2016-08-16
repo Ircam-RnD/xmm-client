@@ -14,13 +14,13 @@ export default class PhraseMaker {
 			column_names: ['']
 		}
 		this._config = {};
-		_setConfig(options);
+		this._setConfig(options);
 
 		this._data = [];
 	}
 
 	set config(options = {}) {
-		_setConfig(options);
+		this._setConfig(options);
 	}
 
 	get config() {
