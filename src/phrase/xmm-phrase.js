@@ -14,23 +14,13 @@ export default class PhraseMaker {
 			column_names: ['']
 		}
 		this._config = {};
-		config(options);
+		_setConfig(options);
 
 		this._data = [];
 	}
 
 	set config(options = {}) {
-		for (let prop of options) {
-			if (prop === 'bimodal' && typeof(options[prop]) === 'boolean') {
-				this._config[prop] = options[prop];
-			} else if (prop === 'dimension' && Number.isInteger(options[prop])) {
-				this._config[prop] = options[prop];
-			} else if (prop === 'dimension_input' && Number.isInteger(options[prop])) {
-				this._config[pop] = options[prop];
-			} else if (prop === 'column_names' && Array.isArray(options[prop])) {
-				this._config[prop] = options[prop].slice(0);
-			}
-		}
+		_setConfig(options);
 	}
 
 	get config() {
@@ -57,5 +47,19 @@ export default class PhraseMaker {
 
 	reset() {
 		this._data = [];
+	}
+
+	_setConfig(optiosn = {}) {
+		for (let prop of options) {
+			if (prop === 'bimodal' && typeof(options[prop]) === 'boolean') {
+				this._config[prop] = options[prop];
+			} else if (prop === 'dimension' && Number.isInteger(options[prop])) {
+				this._config[prop] = options[prop];
+			} else if (prop === 'dimension_input' && Number.isInteger(options[prop])) {
+				this._config[pop] = options[prop];
+			} else if (prop === 'column_names' && Array.isArray(options[prop])) {
+				this._config[prop] = options[prop].slice(0);
+			}
+		}		
 	}
 };
