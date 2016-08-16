@@ -11,7 +11,8 @@ export default class PhraseMaker {
 			bimodal: false,
 			dimension: 1,
 			dimension_input: 0,
-			column_names: ['']
+			column_names: [''],
+			label: ''
 		}
 		this._config = {};
 		this._setConfig(options);
@@ -39,9 +40,6 @@ export default class PhraseMaker {
 
 	addObservation(obs) {
 		if (Array.isArray(obs)) {
-			// for(let id in obs) {
-			// 	this._data.push(obs[id]);
-			// }
 			this._data = this._data.concat(obs);
 		} else {
 			this._data.push(obs);
@@ -62,6 +60,8 @@ export default class PhraseMaker {
 				this._config[prop] = options[prop];
 			} else if (prop === 'column_names' && Array.isArray(options[prop])) {
 				this._config[prop] = options[prop].slice(0);
+			} else if (prop === 'label' && typeof(options[prop]) === 'string') {
+				this._config[prop] = options[prop];
 			}
 		}		
 	}
