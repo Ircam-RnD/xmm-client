@@ -39,7 +39,9 @@ export default class PhraseMaker {
 
 	addObservation(obs) {
 		if (Array.isArray(obs)) {
-			this._data = this._data.concat(obs);
+			for(let id in obs) {
+				this._data.push(obs[id]);
+			}
 		} else {
 			this._data.push(obs);
 		}
