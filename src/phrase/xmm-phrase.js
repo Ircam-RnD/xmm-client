@@ -40,7 +40,7 @@ export default class PhraseMaker {
 
 	addObservation(obs) {
 		if (Array.isArray(obs)) {
-			this._datadata = data.concat(obs);
+			this._data = data.concat(obs);
 		} else {
 			this._data.push(obs);
 		}
