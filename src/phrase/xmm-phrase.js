@@ -33,6 +33,7 @@ export default class PhraseMaker {
 			bimodal: this._config.bimodal,
 			dimension: this._config.dimension,
 			dimension_input: this._config.dimension_input,
+			label: this._config.label,
 			data: this._data.slice(0),
 			length: this._data.length / this._config.dimension
 		};
