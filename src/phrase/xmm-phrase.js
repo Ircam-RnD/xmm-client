@@ -28,14 +28,13 @@ export default class PhraseMaker {
 	}
 
 	get phrase() {
-		let res = {
+		return {
 			bimodal: this._config.bimodal,
 			dimension: this._config.dimension,
 			dimension_input: this._config.dimension_input,
 			data: this._data.slice(0),
 			length: this._data.length / this._config.dimension
 		};
-		return res;
 	}
 
 	addObservation(obs) {
@@ -57,7 +56,7 @@ export default class PhraseMaker {
 			} else if (prop === 'dimension' && Number.isInteger(options[prop])) {
 				this._config[prop] = options[prop];
 			} else if (prop === 'dimension_input' && Number.isInteger(options[prop])) {
-				this._config[pop] = options[prop];
+				this._config[prop] = options[prop];
 			} else if (prop === 'column_names' && Array.isArray(options[prop])) {
 				this._config[prop] = options[prop].slice(0);
 			}
