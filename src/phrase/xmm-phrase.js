@@ -49,7 +49,7 @@ export default class PhraseMaker {
 		this._data = [];
 	}
 
-	_setConfig(optiosn = {}) {
+	_setConfig(options = {}) {
 		for (let prop of options) {
 			if (prop === 'bimodal' && typeof(options[prop]) === 'boolean') {
 				this._config[prop] = options[prop];
