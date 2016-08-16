@@ -38,7 +38,7 @@ export default class PhraseMaker {
 		return res;
 	}
 
-	appendObservation(obs) {
+	addObservation(obs) {
 		if (Array.isArray(obs)) {
 			this._datadata = data.concat(obs);
 		} else {
