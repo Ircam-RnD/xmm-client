@@ -50,7 +50,7 @@ export default class PhraseMaker {
 	}
 
 	_setConfig(options = {}) {
-		for (let prop of options) {
+		for (let prop in options) {
 			if (prop === 'bimodal' && typeof(options[prop]) === 'boolean') {
 				this._config[prop] = options[prop];
 			} else if (prop === 'dimension' && Number.isInteger(options[prop])) {
