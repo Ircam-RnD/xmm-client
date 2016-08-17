@@ -14,10 +14,15 @@ export default class PhraseMaker {
 			column_names: [''],
 			label: ''
 		}
+		Object.assign(defaults, options);
 		this._config = {};
 		this._setConfig(options);
 
-		this._data = [];
+		this.reset();
+		// does :
+		// this._data = [];
+		// this._data_in = [];
+		// this._data_out = [];
 	}
 
 	set config(options = {}) {
@@ -35,20 +40,42 @@ export default class PhraseMaker {
 			dimension_input: this._config.dimension_input,
 			label: this._config.label,
 			data: this._data.slice(0),
-			length: this._data.length / this._config.dimension
+			data_input: this._data_in.slice(0),
+			data_output: this._data_out.slice(0),
+			length: this._config.bimodal
+						?	this._data_in.length / this._config.dimension_input
+						: this._data.length / this._config.dimension
 		};
 	}
 
 	addObservation(obs) {
-		if (Array.isArray(obs)) {
-			this._data = this._data.concat(obs);
+		if (obs.length != this._config.dimension ||
+				(Number.isNumber(obs) && this._config.dimension != 1)) {
+			console.error(
+				'error : incoming observation length not matching with dimensions'
+			);
+			return;
+		}
+		if (this._config.bimodal) {
+			this._data_in = this._data_in.concat(
+				obs.slice(0, this._config.dimension_input)
+			);
+			this._data_out = this._data_out.concat(
+				obs.slice(this._config.dimension_input)
+			);
 		} else {
-			this._data.push(obs);
+			if (Array.isArray(obs)) {
+				this._data = this._data.concat(obs);
+			} else {
+				this._data.push(obs);
+			}
 		}
 	}
 
 	reset() {
 		this._data = [];
+		this._data_in = [];
+		this._data_out = [];
 	}
 
 	_setConfig(options = {}) {
@@ -66,4 +93,4 @@ export default class PhraseMaker {
 			}
 		}		
 	}
-};
+}
