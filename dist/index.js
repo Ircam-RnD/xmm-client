@@ -4,32 +4,32 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _gmm = require('./gmm');
+var _gmmDecoder = require('./gmm/gmm-decoder');
 
 Object.defineProperty(exports, 'GmmDecoder', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(_gmm).default;
+    return _interopRequireDefault(_gmmDecoder).default;
   }
 });
 
-var _hhmm = require('./hhmm');
+var _hhmmDecoder = require('./hhmm/hhmm-decoder');
 
 Object.defineProperty(exports, 'HhmmDecoder', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(_hhmm).default;
+    return _interopRequireDefault(_hhmmDecoder).default;
   }
 });
 
-var _phrase = require('./phrase');
+var _xmmPhrase = require('./phrase/xmm-phrase');
 
 Object.defineProperty(exports, 'PhraseMaker', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(_phrase).default;
+    return _interopRequireDefault(_xmmPhrase).default;
   }
 });
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O3dDQUFTLE87Ozs7Ozs7Ozt5Q0FDQSxPOzs7Ozs7Ozs7MkNBQ0EsTyIsImZpbGUiOiJpbmRleC5qcyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCB7IGRlZmF1bHQgYXMgR21tRGVjb2RlciB9IGZyb20gJy4vZ21tJztcbmV4cG9ydCB7IGRlZmF1bHQgYXMgSGhtbURlY29kZXIgfSBmcm9tICcuL2hobW0nO1xuZXhwb3J0IHsgZGVmYXVsdCBhcyBQaHJhc2VNYWtlciB9IGZyb20gJy4vcGhyYXNlJzsiXX0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OytDQUFTLE87Ozs7Ozs7OztnREFDQSxPOzs7Ozs7Ozs7OENBQ0EsTyIsImZpbGUiOiJpbmRleC5qcyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCB7IGRlZmF1bHQgYXMgR21tRGVjb2RlciB9IGZyb20gJy4vZ21tL2dtbS1kZWNvZGVyJztcbmV4cG9ydCB7IGRlZmF1bHQgYXMgSGhtbURlY29kZXIgfSBmcm9tICcuL2hobW0vaGhtbS1kZWNvZGVyJztcbmV4cG9ydCB7IGRlZmF1bHQgYXMgUGhyYXNlTWFrZXIgfSBmcm9tICcuL3BocmFzZS94bW0tcGhyYXNlJzsiXX0=
