@@ -57,48 +57,48 @@ export default class HhmmDecoder {
    * @param {ResultsCallback} resultsCallback - the callback handling the estimation results
    */
   filter(observation, resultsCallback) {
-    if(this._model === undefined) {
-      console.log("no model loaded");
-      return;
-    }
-
     let err = null;
     let res = null;
 
-    try {
-      hhmmUtils.hhmmFilter(observation, this._model, this._modelResults);
+    if(this._model === undefined) {
+      err = 'no model loaded yet';
+    } else {
+      try {
+        hhmmUtils.hhmmFilter(observation, this._model, this._modelResults);
 
-      // create results object from relevant modelResults values :
+        // create results object from relevant modelResults values :
 
-      const lklst = (this._modelResults.likeliest > -1)
-                  ? this._model.models[this._modelResults.likeliest].label
-                  : 'unknown';
-      const lklhds = this._modelResults.smoothed_normalized_likelihoods.slice(0);
-      res = {
-        likeliest: lklst,
-        likelihoods: lklhds,
-        alphas: new Array(this._model.models.length)
-      }
-
-      for(let i = 0; i < this._model.models.length; i++) {
-        if(this._model.configuration.default_parameters.hierarchical) {
-          res.alphas[i]
-            = this._modelResults.singleClassHmmModelResults[i].alpha_h[0];
-        } else {
-          res.alphas[i]
-            = this._modelResults.singleClassHmmModelResults[i].alpha[0];
+        const lklst = (this._modelResults.likeliest > -1)
+                    ? this._model.models[this._modelResults.likeliest].label
+                    : 'unknown';
+        const lklhds = this._modelResults.smoothed_normalized_likelihoods.slice(0);
+        res = {
+          likeliest: lklst,
+          likelihoods: lklhds,
+          alphas: new Array(this._model.models.length)
         }
-      }
 
-      if(this._model.shared_parameters.bimodal) {
-        res.outputValues = this._modelResults.output_values.slice(0);
-        // results.outputCovariance
-        //     = this._modelResults.output_covariance.slice(0);
+        for(let i = 0; i < this._model.models.length; i++) {
+          if(this._model.configuration.default_parameters.hierarchical) {
+            res.alphas[i]
+              = this._modelResults.singleClassHmmModelResults[i].alpha_h[0];
+          } else {
+            res.alphas[i]
+              = this._modelResults.singleClassHmmModelResults[i].alpha[0];
+          }
+        }
+
+        if(this._model.shared_parameters.bimodal) {
+          res.outputValues = this._modelResults.output_values.slice(0);
+          // results.outputCovariance
+          //     = this._modelResults.output_covariance.slice(0);
+        }
+      } catch (e) {
+        err = 'problem occured during filtering : ' + e;
       }
-    } catch (e) {
-      err = 'problem occured during filtering : ' + e;
     }
-    resultsCallback(err, results);
+    
+    resultsCallback(err, res);
   }
 
   /**

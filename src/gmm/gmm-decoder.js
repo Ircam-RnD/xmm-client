@@ -53,34 +53,34 @@ export default class GmmDecoder {
    * @param {resultsCallback} resultsCallback - the callback handling the estimation results
    */
   filter(observation, resultsCallback) {
-    if(this._model === undefined) {
-      console.log("no model loaded");
-      return;
-    }
-
     let err = null;
     let res = null;
 
-    try {
-      gmmUtils.gmmFilter(observation, this._model, this._modelResults);         
+    if(this._model === undefined) {
+      console.log("no model loaded");
+      return;
+    } else {
+      try {
+        gmmUtils.gmmFilter(observation, this._model, this._modelResults);         
 
-      const lklst = (this._modelResults.likeliest > -1)
-                  ? this._model.models[this._modelResults.likeliest].label
-                  : 'unknown';
-      const lklhds = this._modelResults.smoothed_normalized_likelihoods.slice(0);
-      res = {
-        likeliest: lklst,
-        likelihoods: lklhds         
-      }
+        const lklst = (this._modelResults.likeliest > -1)
+                    ? this._model.models[this._modelResults.likeliest].label
+                    : 'unknown';
+        const lklhds = this._modelResults.smoothed_normalized_likelihoods.slice(0);
+        res = {
+          likeliest: lklst,
+          likelihoods: lklhds         
+        }
 
-      // add regression results to global results if bimodal :
-      if(this._model.shared_parameters.bimodal) {
-        res.outputValues = this._modelResults.output_values.slice(0);
-        // results.outputCovariance
-        //     = this.modelResults.output_covariance.slice(0);
+        // add regression results to global results if bimodal :
+        if(this._model.shared_parameters.bimodal) {
+          res.outputValues = this._modelResults.output_values.slice(0);
+          // results.outputCovariance
+          //     = this.modelResults.output_covariance.slice(0);
+        }
+      } catch (e) {
+        err = 'problem occured during filtering : ' + e;
       }
-    } catch (e) {
-      err = 'problem occured during filtering : ' + e;
     }
 
     resultsCallback(err, res);
