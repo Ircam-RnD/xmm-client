@@ -36,6 +36,7 @@ export default class PhraseMaker {
 	get phrase() {
 		return {
 			bimodal: this._config.bimodal,
+			column_names: this._config.column_names,
 			dimension: this._config.dimension,
 			dimension_input: this._config.dimension_input,
 			label: this._config.label,
@@ -49,13 +50,14 @@ export default class PhraseMaker {
 	}
 
 	addObservation(obs) {
-		if (obs.length != this._config.dimension ||
-				(Number.isNumber(obs) && this._config.dimension != 1)) {
+		if (obs.length !== this._config.dimension ||
+				(typeof(obs) === 'number' && this._config.dimension !== 1)) {
 			console.error(
 				'error : incoming observation length not matching with dimensions'
 			);
 			return;
 		}
+
 		if (this._config.bimodal) {
 			this._data_in = this._data_in.concat(
 				obs.slice(0, this._config.dimension_input)
@@ -93,4 +95,4 @@ export default class PhraseMaker {
 			}
 		}		
 	}
-}
+};
