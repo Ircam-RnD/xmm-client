@@ -29,7 +29,7 @@ export default class GmmDecoder {
      * Size of the likelihood smoothing window
      * @type {Number}
      */
-    this.likelihoodWindow = windowSize;
+    this._likelihoodWindow = windowSize;
   }
 
   /**
@@ -143,9 +143,9 @@ export default class GmmDecoder {
           log_likelihood: 0
         };
 
-        res.likelihood_buffer = new Array(this.likelihoodWindow);
-        for(let j = 0; j < this.likelihoodWindow; j++) {
-          res.likelihood_buffer[j] = 1 / this.likelihoodWindow;
+        res.likelihood_buffer = new Array(this._likelihoodWindow);
+        for(let j = 0; j < this._likelihoodWindow; j++) {
+          res.likelihood_buffer[j] = 1 / this._likelihoodWindow;
         }
         res.likelihood_buffer_index = 0;
 
@@ -167,13 +167,13 @@ export default class GmmDecoder {
   }
 
   set likelihoodWindow(newWindowSize) {
-    this.likelihoodWindow = newWindowSize;
+    this._likelihoodWindow = newWindowSize;
     if(this.model === undefined) return;
     const res = this.modelResults.singleClassModelResults;
     for(let i=0; i<this.model.models.length; i++) {
-      res[i].likelihood_buffer = new Array(this.likelihoodWindow);
-      for(let j=0; j<this.likelihoodWindow; j++) {
-        res.likelihood_buffer[j] = 1 / this.likelihoodWindow;
+      res[i].likelihood_buffer = new Array(this._likelihoodWindow);
+      for(let j=0; j<this._likelihoodWindow; j++) {
+        res.likelihood_buffer[j] = 1 / this._likelihoodWindow;
       }
     }
   }
@@ -204,6 +204,6 @@ export default class GmmDecoder {
   }
 
   get likelihoodWindow() {
-    return this.likelihoodWindow;
+    return this._likelihoodWindow;
   }
 }
