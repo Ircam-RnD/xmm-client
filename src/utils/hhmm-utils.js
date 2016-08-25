@@ -357,12 +357,12 @@ export const hmmFilter = (obsIn, m, mRes) => {
 //   const mRes = hmmRes;
   let ct = 0.0;
   if (mRes.forward_initialized) {
-    ct = hmmForwardUpdate(observation, m, mRes);
+    ct = hmmForwardUpdate(obsIn, m, mRes);
   } else {
     for (let j = 0; j < mRes.likelihood_buffer.length; j++) {
       mRes.likelihood_buffer[j] = 0.0;
     }
-    ct = hmmForwardInit(observation, m, mRes);
+    ct = hmmForwardInit(obsIn, m, mRes);
     mRes.forward_initialized = true;
   }
 
@@ -371,7 +371,7 @@ export const hmmFilter = (obsIn, m, mRes) => {
   hmmUpdateResults(m, mRes);
 
   if (m.states[0].components[0].bimodal) {
-    hmmRegression(observation, m, mRes);
+    hmmRegression(obsIn, m, mRes);
   }
 
   return mRes.instant_likelihood;
@@ -388,21 +388,21 @@ export const hhmmLikelihoodAlpha = (exitNum, likelihoodVec, hm, hmRes) => {
 //   const mRes = hhmmRes;
 
   if (exitNum < 0) {
-    for (let i = 0; i < m.models.length; i++) {
+    for (let i = 0; i < hm.models.length; i++) {
       likelihoodVec[i] = 0;
       for (let exit = 0; exit < 3; exit++) {
-        for (let k = 0; k < m.models[i].parameters.states; k++) {
+        for (let k = 0; k < hm.models[i].parameters.states; k++) {
           likelihoodVec[i]
-            += mRes.singleClassHmmModelResults[i].alpha_h[exit][k];
+            += hmRes.singleClassHmmModelResults[i].alpha_h[exit][k];
         }
       }
     }
   } else {
-    for (let i = 0; i < m.models.length; i++) {
+    for (let i = 0; i < hm.models.length; i++) {
       likelihoodVec[i] = 0;
-      for (let k = 0; k < m.models[i].parameters.states; k++) {
+      for (let k = 0; k < hm.models[i].parameters.states; k++) {
         likelihoodVec[i]
-          += mRes.singleClassHmmModelResults[i].alpha_h[exitNum][k];
+          += hmRes.singleClassHmmModelResults[i].alpha_h[exitNum][k];
       }
     }
   }
@@ -436,28 +436,24 @@ export const hhmmForwardInit = (obsIn, hm, hmRes) => {
       for (let k = 0; k < nstates; k++) {
         //-------------------------------------------------------------- bimodal
         if (hm.shared_parameters.bimodal) {
-          mRes.alpha_h[0][k] = m.prior[k]
-                     * gmmUtils.gmmObsProbInput(observation,
-                                  m.states[k]);
+          mRes.alpha_h[0][k] = m.prior[k] *
+                               gmmUtils.gmmObsProbInput(obsIn, m.states[k]);
         //------------------------------------------------------------- unimodal
         } else {
-          mRes.alpha_h[0][k] = m.prior[k]
-                     * gmmUtils.gmmObsProb(observation,
-                               m.states[k]);
+          mRes.alpha_h[0][k] = m.prior[k] *
+                               gmmUtils.gmmObsProb(obsIn, m.states[k]);
         }
-        mRes.instant_likelihood += mRes.alpha[0][k];
+        mRes.instant_likelihood += mRes.alpha_h[0][k];
       }
     //--------------------------------------------------------------- left-right
     } else {
       mRes.alpha_h[0][0] = hm.prior[i];
       //---------------------------------------------------------------- bimodal
       if (hm.shared_parameters.bimodal) {
-        mRes.alpha_h[0][0] *= gmmUtils.gmmObsProbInput(observation,
-                                 m.states[k]);
+        mRes.alpha_h[0][0] *= gmmUtils.gmmObsProbInput(obsIn, m.states[k]);
       //--------------------------------------------------------------- unimodal
       } else {
-        mRes.alpha_h[0][0] *= gmmUtils.gmmObsProb(observation,
-                              m.states[k]);
+        mRes.alpha_h[0][0] *= gmmUtils.gmmObsProb(obsIn, m.states[k]);
       }
       mRes.instant_likelihood = mRes.alpha_h[0][0];
     }
@@ -560,10 +556,10 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
 
     for (let k = 0; k < nstates; k++) {
       if (hm.shared_parameters.bimodal) {
-        tmp = gmmUtils.gmmObsProbInput(observation, m.states[k]) *
+        tmp = gmmUtils.gmmObsProbInput(obsIn, m.states[k]) *
             front[k];
       } else {
-        tmp = gmmUtils.gmmObsProb(observation, m.states[k]) * front[k];
+        tmp = gmmUtils.gmmObsProb(obsIn, m.states[k]) * front[k];
       }
 
       mRes.alpha_h[2][k] = hm.exit_transition[i] *
@@ -671,8 +667,7 @@ export const hhmmFilter = (obsIn, hm, hmRes) => {
     const dimOut = dim - dimIn;
 
     for (let i = 0; i < hm.models.length; i++) {
-      hmmRegression(obsIn,hm.models[i],
-             hmRes.singleClassHmmModelResults[i]);
+      hmmRegression(obsIn, hm.models[i], hmRes.singleClassHmmModelResults[i]);
     }
 
     //---------------------------------------------------------------- likeliest

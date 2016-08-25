@@ -249,7 +249,7 @@ export const gmmRegression = (obsIn, m, mRes) => {
 };
 
 
-export const gmmObsProb = (obIn, singleGmm, component = -1) => {
+export const gmmObsProb = (obsIn, singleGmm, component = -1) => {
   const coeffs = singleGmm.mixture_coeffs;
   //console.log(coeffs);
   //if(coeffs === undefined) coeffs = [1];
@@ -261,7 +261,7 @@ export const gmmObsProb = (obIn, singleGmm, component = -1) => {
       p += gmmObsProb(obsIn, singleGmm, c);
     }
   } else {
-    p = coeffs[componenr] *
+    p = coeffs[component] *
       gmmComponentLikelihood(obsIn, components[component]);       
   }
   return p;

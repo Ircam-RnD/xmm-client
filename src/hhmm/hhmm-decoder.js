@@ -63,18 +63,21 @@ export default class HhmmDecoder {
     if(this._model === undefined) {
       err = 'no model loaded yet';
     } else {
+      //console.log(observation);
+      //this._observation = observation;
       try {
         hhmmUtils.hhmmFilter(observation, this._model, this._modelResults);
 
         // create results object from relevant modelResults values :
 
-        const lklst = (this._modelResults.likeliest > -1)
-                    ? this._model.models[this._modelResults.likeliest].label
-                    : 'unknown';
-        const lklhds = this._modelResults.smoothed_normalized_likelihoods.slice(0);
+        const likeliest = (this._modelResults.likeliest > -1)
+                        ? this._model.models[this._modelResults.likeliest].label
+                        : 'unknown';
+        const likelihoods = this._modelResults.smoothed_normalized_likelihoods.slice(0);
         res = {
-          likeliest: lklst,
-          likelihoods: lklhds,
+          likeliest: likeliest,
+          likeliestIndex: this._modelResults.likeliest,
+          likelihoods: likelihoods,
           alphas: new Array(this._model.models.length)
         }
 
@@ -97,7 +100,7 @@ export default class HhmmDecoder {
         err = 'problem occured during filtering : ' + e;
       }
     }
-    
+
     resultsCallback(err, res);
   }
 
