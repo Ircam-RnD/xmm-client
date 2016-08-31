@@ -1,0 +1,12 @@
+{	
+	"source": {
+    "include": [ "../src/phrase", "../src/gmm", "../src/hhmm" ],
+    "exclude": [ "../src/utils" ],
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+	},
+	"opts": {
+		"destination": "./out",
+		"encoding": "utf8"
+	}
+}

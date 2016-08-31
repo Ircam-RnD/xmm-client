@@ -1,11 +1,30 @@
 /**
- * Class to ease the creation of XMM compatible data recordings
- * able to validate a recorded buffer (phrase) or directly record a valid phrase
- *
- * @todo specify and implement
+ * @exports PhraseMaker
+ * XMM compatible phrase builder utility <br />
+ * Class to ease the creation of XMM compatible data recordings, aka phrases.
+ * Phrases are typically arrays (flattened matrices) of size <pre><code>N * M</code></pre>,
+ * <pre><code>N</code></pre> being the size of a vector element, and <pre><code>M</code></pre>
+ * being the length of the phrase itself.
  */
 
 export default class PhraseMaker {
+	/**
+	 * @typedef {Object} XmmPhraseConfig
+	 * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
+	 * If true, the {@link XmmPhraseConfig#dimension_input} property will be taken into account.
+	 * @property {Number} dimension - Size of a phrase's vector element.
+	 * @property {Number} dimension_input - Size of the part of an input vector element that should be used for training.
+	 * This implies that the rest of the vector (of size <emph>dimension - dimension_input</emph>)
+	 * will be used for regression. Only taken into account if {@link XmmPhraseConfig#bimodal} is true.
+	 * @property {Array.String} column_names - Array of string identifiers describing each scalar of the phrase's vector elements.
+	 * Typically of size {@link XmmPhraseConfig#dimension}.
+	 * @property {String} label - The string identifier of the class the phrase belongs to.
+	 */
+
+	/**
+	 * @param {XmmPhraseConfig} options - Default phrase configuration.
+	 * @see {@link config}.
+	 */
 	constructor(options = {}) {
 		const defaults = {
 			bimodal: false,
@@ -19,20 +38,50 @@ export default class PhraseMaker {
 		this._setConfig(options);
 
 		this.reset();
-		// does :
-		// this._data = [];
-		// this._data_in = [];
-		// this._data_out = [];
+	}
+
+	/**
+	 * XMM phrase configuration object.
+	 * Only legal fields will be checked before being added to the config, others will be ignored
+	 * @type {XmmPhraseConfig}
+	 */
+	get config() {
+		return this._config;
 	}
 
 	set config(options = {}) {
 		this._setConfig(options);
 	}
 
-	get config() {
-		return this._config;
-	}
+	/**
+	 * @typedef {Object} XmmPhrase
+	 * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
+	 * If true, the {@link XmmPhrase#dimension_input} property will be taken into account.
+	 * @property {Number} dimension - Size of a phrase's vector element.
+	 * @property {Number} dimension_input - Size of the part of an input vector element that should be used for training.
+	 * This implies that the rest of the vector (of size <pre><code>dimension - dimension_input</code></pre>)
+	 * will be used for regression. Only taken into account if {@link XmmPhraseConfig#bimodal} is true.
+	 * @property {Array.String} column_names - Array of string identifiers describing each scalar of the phrase's vector elements.
+	 * Typically of size {@link XmmPhraseConfig#dimension}.
+	 * @property {String} label - The string identifier of the class the phrase belongs to.
+	 * @property {Array.Number} - The phrase's data, containing all the vectors flattened into a single one.
+	 * Only taken into account if {@link XmmPhraseConfig#bimodal} is false.
+	 * @property {Array.Number} data_input - The phrase's data which will be used for training, flattened into a single vector.
+	 * Only taken into account if {@link XmmPhraseConfig#bimodal} is true.
+	 * @property {Array.Number} data_output - The phrase's data which will be used for regression, flattened into a single vector.
+	 * Only taken into account if {@link XmmPhraseConfig#bimodal} is true.
+	 * @property {Number} length - The length of the phrase, e.g. one of the following :
+	 * <li>
+	 * <ul><pre><code>data.length / {@link XmmPhrase#dimension}</code></pre></ul>
+	 * <ul><pre><code>data_input.length / {@link XmmPhrase#dimension_input}</code></pre></ul>
+	 * <ul><pre><code>data_output.length / {@link XmmPhrase#dimension_output}</code></pre></ul>
+	 * </li>
+	 */
 
+	/**
+	 * An XMM valid phrase, ready to be processed by the library
+	 * @type {XmmPhrase}
+	 */
 	get phrase() {
 		return {
 			bimodal: this._config.bimodal,
@@ -49,12 +98,18 @@ export default class PhraseMaker {
 		};
 	}
 
+	/**
+	 * Append an observation vector to the phrase's data. Must be of length {@link XmmPhraseConfig#dimension}.
+	 * @param {Array.Number} obs - An input vector, aka observation. If {XmmPhraseConfig#bimodal} is true
+	 * @throws Will throw an error if the input vector doesn't match the config.
+	 */
 	addObservation(obs) {
 		if (obs.length !== this._config.dimension ||
 				(typeof(obs) === 'number' && this._config.dimension !== 1)) {
 			console.error(
 				'error : incoming observation length not matching with dimensions'
 			);
+			throw 'BadVectorSizeException';
 			return;
 		}
 
@@ -74,12 +129,16 @@ export default class PhraseMaker {
 		}
 	}
 
+	/**
+	 * Clear the phrase's data so that a new one is ready to be recorded.
+	 */
 	reset() {
 		this._data = [];
 		this._data_in = [];
 		this._data_out = [];
 	}
 
+	/** @private */
 	_setConfig(options = {}) {
 		for (let prop in options) {
 			if (prop === 'bimodal' && typeof(options[prop]) === 'boolean') {
