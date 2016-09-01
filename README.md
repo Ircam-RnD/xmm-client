@@ -1,4 +1,4 @@
-# client-side decoders for XMM models
+# XMM models decoders for the browser
 
 This library is intended to be used with the
 [original XMM library](https://github.com/julesfrancoise/xmm), or its node wrapper
