@@ -17,5 +17,7 @@ some estimation results when it's fed with an input vector
 
 ## documentation :
 
+[Github pages](https://ircam-rnd.github.io/xmm-client/)
+
 ## note :
 xmm-client is a work in progress, use at your own risk.
