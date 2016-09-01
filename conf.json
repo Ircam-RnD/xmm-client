@@ -14,7 +14,7 @@
 		"plugins/markdown"
 	],
 	"opts": {
-		"destination": "./doc",
+		"destination": "./docs",
 		"encoding": "utf8",
 		"template": "node_modules/jsdoc-template"
 	},
