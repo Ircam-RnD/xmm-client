@@ -1,7 +1,7 @@
 {
   "name": "xmm-client",
-  "version": "0.0.1",
-  "description": "server-side machine learning based on XMM",
+  "version": "0.1.0",
+  "description": "JavaScript XMM utilities for the browser, including model decoders",
   "main": "dist/index.js",
   "license": "BSD-3",
   "repository": {
@@ -9,9 +9,8 @@
     "url": "https://github.com/Ircam-RnD/xmm-client"
   },
   "private": true,
-  "homepage": "https://github.com/josephlarralde/xmm-client",
+  "homepage": "https://github.com/Ircam-RnD/xmm-client",
   "scripts": {
-    "preinstall": "mkdir doc",
     "bundle": "node ./bin/runner --bundle",
     "transpile": "node ./bin/runner --transpile",
     "watch": "node ./bin/runner --watch"
