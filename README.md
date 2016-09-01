@@ -15,5 +15,7 @@ some estimation results when it's fed with an input vector
 ## installation :
 `npm install Ircam-RnD/xmm-client`
 
+## documentation :
+
 ## note :
-xmm-client is a work in progress, use it at your own risk.
+xmm-client is a work in progress, use at your own risk.
