@@ -1,23 +1,25 @@
 /**
- * @exports PhraseMaker
  * XMM compatible phrase builder utility <br />
- * Class to ease the creation of XMM compatible data recordings, aka phrases.
- * Phrases are typically arrays (flattened matrices) of size <pre><code>N * M</code></pre>,
- * <pre><code>N</code></pre> being the size of a vector element, and <pre><code>M</code></pre>
- * being the length of the phrase itself.
+ * Class to ease the creation of XMM compatible data recordings, aka phrases. <br />
+ * Phrases are typically arrays (flattened matrices) of size N * M,
+ * N being the size of a vector element, and M the length of the phrase itself,
+ * wrapped together in an object with a few settings.
  */
 
-export default class PhraseMaker {
+class PhraseMaker {
 	/**
-	 * @typedef {Object} XmmPhraseConfig
+	 * XMM phrase configuration object.
+	 * @typedef XmmPhraseConfig
+	 * @type {Object}
+	 * @name XmmPhraseConfig
 	 * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
-	 * If true, the {@link XmmPhraseConfig#dimension_input} property will be taken into account.
+	 * If true, the <code>dimension_input</code> property will be taken into account.
 	 * @property {Number} dimension - Size of a phrase's vector element.
 	 * @property {Number} dimension_input - Size of the part of an input vector element that should be used for training.
-	 * This implies that the rest of the vector (of size <emph>dimension - dimension_input</emph>)
-	 * will be used for regression. Only taken into account if {@link XmmPhraseConfig#bimodal} is true.
+	 * This implies that the rest of the vector (of size <code>dimension - dimension_input</code>)
+	 * will be used for regression. Only taken into account if <code>bimodal</code> is true.
 	 * @property {Array.String} column_names - Array of string identifiers describing each scalar of the phrase's vector elements.
-	 * Typically of size {@link XmmPhraseConfig#dimension}.
+	 * Typically of size <code>dimension</code>.
 	 * @property {String} label - The string identifier of the class the phrase belongs to.
 	 */
 
@@ -54,27 +56,30 @@ export default class PhraseMaker {
 	}
 
 	/**
-	 * @typedef {Object} XmmPhrase
+	 * A regular XMM phrase, ready to be used by the library.
+	 * @typedef XmmPhrase
+	 * @type {Object}
+	 * @name XmmPhrase
 	 * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
-	 * If true, the {@link XmmPhrase#dimension_input} property will be taken into account.
+	 * If true, the <code>dimension_input</code> property will be taken into account.
 	 * @property {Number} dimension - Size of a phrase's vector element.
 	 * @property {Number} dimension_input - Size of the part of an input vector element that should be used for training.
-	 * This implies that the rest of the vector (of size <pre><code>dimension - dimension_input</code></pre>)
-	 * will be used for regression. Only taken into account if {@link XmmPhraseConfig#bimodal} is true.
+	 * This implies that the rest of the vector (of size <code>dimension - dimension_input</code>)
+	 * will be used for regression. Only taken into account if <code>bimodal</code> is true.
 	 * @property {Array.String} column_names - Array of string identifiers describing each scalar of the phrase's vector elements.
-	 * Typically of size {@link XmmPhraseConfig#dimension}.
+	 * Typically of size <code>dimension</code>.
 	 * @property {String} label - The string identifier of the class the phrase belongs to.
-	 * @property {Array.Number} - The phrase's data, containing all the vectors flattened into a single one.
-	 * Only taken into account if {@link XmmPhraseConfig#bimodal} is false.
+	 * @property {Array.Number} data - The phrase's data, containing all the vectors flattened into a single one.
+	 * Only taken into account if <code>bimodal</code> is false.
 	 * @property {Array.Number} data_input - The phrase's data which will be used for training, flattened into a single vector.
-	 * Only taken into account if {@link XmmPhraseConfig#bimodal} is true.
+	 * Only taken into account if <code>bimodal</code> is true.
 	 * @property {Array.Number} data_output - The phrase's data which will be used for regression, flattened into a single vector.
-	 * Only taken into account if {@link XmmPhraseConfig#bimodal} is true.
+	 * Only taken into account if <code>bimodal</code> is true.
 	 * @property {Number} length - The length of the phrase, e.g. one of the following :
-	 * <li>
-	 * <ul><pre><code>data.length / {@link XmmPhrase#dimension}</code></pre></ul>
-	 * <ul><pre><code>data_input.length / {@link XmmPhrase#dimension_input}</code></pre></ul>
-	 * <ul><pre><code>data_output.length / {@link XmmPhrase#dimension_output}</code></pre></ul>
+	 * <li style="list-style-type: none;">
+	 * <ul><code>data.length / dimension</code></ul>
+	 * <ul><code>data_input.length / dimension_input</code></ul>
+	 * <ul><code>data_output.length / dimension_output</code></ul>
 	 * </li>
 	 */
 
@@ -155,3 +160,5 @@ export default class PhraseMaker {
 		}		
 	}
 };
+
+export default PhraseMaker;

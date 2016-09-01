@@ -1,14 +1,13 @@
 import * as hhmmUtils from '../utils/hhmm-utils';
 
 /**
- * @exports HhmmDecoder
  * Hierarchical HMM decoder <br />
  * Loads a model trained by the XMM library and processes an input stream of float vectors in real-time.
  * If the model was trained for regression, outputs an estimation of the associated process.
  * 
  */
 
-export default class HhmmDecoder {
+class HhmmDecoder {
 
   /**
    * @param {Number} [windowSize=1] - Size of the likelihood smoothing window.
@@ -38,19 +37,23 @@ export default class HhmmDecoder {
   }
 
   /**
-   * @typedef {Object} HhmmResults
-   * @property {string} likeliest - The likeliest model's label.
-   * @property {Array.number} likelihoods - The array of all models' normalized likelihoods.
-   * @property {Array.number} timeProgressions - The array of all models' normalized time progressions.
-   * @property {Array.Array.number} alphas - The array of all models' states likelihoods array.
-   * @property {?Array.number} outputValues - If the model was trained with regression, the estimated float vector output.
-   */
-
-  /**
    * Callback handling estimation results.
    * @callback HhmmResultsCallback
    * @param {string} err - Description of a potential error.
    * @param {HhmmResults} res - Object holding the estimation results.
+   */
+
+  /**
+   * Results of the filtering process.
+   * @typedef HhmmResults
+   * @type {Object}
+   * @property {String} likeliest - The likeliest model's label.
+   * @property {Number} likeliestIndex - The likeliest model's index
+   * @property {Array.number} likelihoods - The array of all models' smoothed normalized likelihoods.
+   * @property {Array.number} timeProgressions - The array of all models' normalized time progressions.
+   * @property {Array.Array.number} alphas - The array of all models' states likelihoods array.
+   * @property {?Array.number} outputValues - If the model was trained with regression, the estimated float vector output.
+   * @property {?Array.number} outputCovariance - If the model was trained with regression, the output covariance matrix.
    */
 
   /**
@@ -80,10 +83,12 @@ export default class HhmmDecoder {
           likeliest: likeliest,
           likeliestIndex: this._modelResults.likeliest,
           likelihoods: likelihoods,
+          timeProgressions: new Array(this._model.models.length),
           alphas: new Array(this._model.models.length)
         }
 
         for(let i = 0; i < this._model.models.length; i++) {
+          res.timeProgressions[i] = this._modelResults.singleClassHhmmModelResults[i].progress;
           if(this._model.configuration.default_parameters.hierarchical) {
             res.alphas[i]
               = this._modelResults.singleClassHmmModelResults[i].alpha_h[0];
@@ -94,9 +99,9 @@ export default class HhmmDecoder {
         }
 
         if(this._model.shared_parameters.bimodal) {
-          res.outputValues = this._modelResults.output_values.slice(0);
-          // results.outputCovariance
-          //     = this._modelResults.output_covariance.slice(0);
+          res['outputValues'] = this._modelResults.output_values.slice(0);
+          res['outputCovariance']
+              = this._modelResults.output_covariance.slice(0);
         }
       } catch (e) {
         err = 'problem occured during filtering : ' + e;
@@ -310,4 +315,6 @@ export default class HhmmDecoder {
     }
     return 0;
   }
-}
+};
+
+export default HhmmDecoder;

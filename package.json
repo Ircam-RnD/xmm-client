@@ -11,6 +11,7 @@
   "private": true,
   "homepage": "https://github.com/josephlarralde/xmm-client",
   "scripts": {
+    "preinstall": "mkdir doc",
     "bundle": "node ./bin/runner --bundle",
     "transpile": "node ./bin/runner --transpile",
     "watch": "node ./bin/runner --watch"
@@ -33,6 +34,7 @@
     "browserify": "^13.0.0",
     "colors": "^1.1.2",
     "fs-extra": "^0.26.5",
+    "jsdoc-template": "github:collective-soundworks/jsdoc-template",
     "ora": "^0.2.0",
     "uglify-js": "^2.6.2",
     "watch": "^0.17.1"

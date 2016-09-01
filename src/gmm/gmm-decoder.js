@@ -1,13 +1,12 @@
 import * as gmmUtils from '../utils/gmm-utils';
 
 /**
- * @exports GmmDecoder
  * GMM decoder <br />
  * Loads a model trained by the XMM library and processes an input stream of float vectors in real-time.
  * If the model was trained for regression, outputs an estimation of the associated process.
  */
 
-export default class GmmDecoder {
+class GmmDecoder {
 
   /**
    * @param {Number} [windowSize=1] - Size of the likelihood smoothing window.
@@ -37,17 +36,21 @@ export default class GmmDecoder {
   }
 
   /**
-   * @typedef {Object} GmmResults
-   * @property {String} likeliest - The likeliest model's label.
-   * @property {Array.number} likelihoods - The array of all models' normalized likelihoods.
-   * @property {?Array.number} outputValues - If the model was trained with regression, the estimated float vector output.
-   */
-
-  /**
    * Callback handling estimation results.
    * @callback GmmResultsCallback
    * @param {String} err - Description of a potential error.
    * @param {GmmResults} res - Object holding the estimation results.
+   */
+
+  /**
+   * Results of the filtering process.
+   * @typedef GmmResults
+   * @type {Object}
+   * @property {String} likeliest - The likeliest model's label.
+   * @property {Number} likeliestIndex - The likeliest model's index
+   * @property {Array.number} likelihoods - The array of all models' smoothed normalized likelihoods.
+   * @property {?Array.number} outputValues - If the model was trained with regression, the estimated float vector output.
+   * @property {?Array.number} outputCovariance - If the model was trained with regression, the output covariance matrix.
    */
 
   /**
@@ -66,20 +69,21 @@ export default class GmmDecoder {
       try {
         gmmUtils.gmmFilter(observation, this._model, this._modelResults);         
 
-        const lklst = (this._modelResults.likeliest > -1)
-                    ? this._model.models[this._modelResults.likeliest].label
-                    : 'unknown';
-        const lklhds = this._modelResults.smoothed_normalized_likelihoods.slice(0);
+        const likeliest = (this._modelResults.likeliest > -1)
+                        ? this._model.models[this._modelResults.likeliest].label
+                        : 'unknown';
+        const likelihoods = this._modelResults.smoothed_normalized_likelihoods.slice(0);
         res = {
-          likeliest: lklst,
-          likelihoods: lklhds         
+          likeliest: likeliest,
+          likeliestIndex: this._modelResults.likeliest,
+          likelihoods: likelihoods
         }
 
         // add regression results to global results if bimodal :
         if(this._model.shared_parameters.bimodal) {
-          res.outputValues = this._modelResults.output_values.slice(0);
-          // results.outputCovariance
-          //     = this.modelResults.output_covariance.slice(0);
+          res['outputValues'] = this._modelResults.output_values.slice(0);
+          res['outputCovariance']
+              = this.modelResults.output_covariance.slice(0);
         }
       } catch (e) {
         err = 'problem occured during filtering : ' + e;
@@ -239,4 +243,6 @@ export default class GmmDecoder {
     }
     return 0;
   }
-}
+};
+
+export default GmmDecoder;
