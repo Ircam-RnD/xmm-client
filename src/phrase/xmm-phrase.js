@@ -56,7 +56,7 @@ class PhraseMaker {
 	}
 
 	/**
-	 * A regular XMM phrase, ready to be used by the library.
+	 * A valid XMM phrase, ready to be processed by the XMM library.
 	 * @typedef XmmPhrase
 	 * @type {Object}
 	 * @name XmmPhrase
@@ -84,7 +84,8 @@ class PhraseMaker {
 	 */
 
 	/**
-	 * An XMM valid phrase, ready to be processed by the library
+	 * A valid XMM phrase, ready to be processed by the XMM library.
+	 * @readonly
 	 * @type {XmmPhrase}
 	 */
 	get phrase() {
@@ -104,8 +105,8 @@ class PhraseMaker {
 	}
 
 	/**
-	 * Append an observation vector to the phrase's data. Must be of length {@link XmmPhraseConfig#dimension}.
-	 * @param {Array.Number} obs - An input vector, aka observation. If {XmmPhraseConfig#bimodal} is true
+	 * Append an observation vector to the phrase's data. Must be of length <code>dimension</code>.
+	 * @param {Array.Number} obs - An input vector, aka observation. If <code>bimodal</code> is true
 	 * @throws Will throw an error if the input vector doesn't match the config.
 	 */
 	addObservation(obs) {
