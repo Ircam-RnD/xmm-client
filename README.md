@@ -3,7 +3,7 @@
 
 This library is intended to be used with the
 [original XMM library](https://github.com/julesfrancoise/xmm), or its node wrapper
-[xmm-node](https//github.com/Ircam-RnD/xmm-node), which take care of organizing phrases
+[xmm-node](https://github.com/Ircam-RnD/xmm-node), which take care of organizing phrases
 into training sets and use them for training statistical models.
 
 It contains 3 classes :
