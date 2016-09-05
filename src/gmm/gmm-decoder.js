@@ -4,6 +4,7 @@ import * as gmmUtils from '../utils/gmm-utils';
  * GMM decoder <br />
  * Loads a model trained by the XMM library and processes an input stream of float vectors in real-time.
  * If the model was trained for regression, outputs an estimation of the associated process.
+ * @class
  */
 
 class GmmDecoder {

@@ -4,6 +4,7 @@
  * Phrases are typically arrays (flattened matrices) of size N * M,
  * N being the size of a vector element, and M the length of the phrase itself,
  * wrapped together in an object with a few settings.
+ * @class
  */
 
 class PhraseMaker {
