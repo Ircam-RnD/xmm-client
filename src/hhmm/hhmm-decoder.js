@@ -74,7 +74,6 @@ class HhmmDecoder {
         hhmmUtils.hhmmFilter(observation, this._model, this._modelResults);
 
         // create results object from relevant modelResults values :
-
         const likeliest = (this._modelResults.likeliest > -1)
                         ? this._model.models[this._modelResults.likeliest].label
                         : 'unknown';
@@ -85,11 +84,11 @@ class HhmmDecoder {
           likelihoods: likelihoods,
           timeProgressions: new Array(this._model.models.length),
           alphas: new Array(this._model.models.length)
-        }
+        };
 
-        for(let i = 0; i < this._model.models.length; i++) {
-          res.timeProgressions[i] = this._modelResults.singleClassHhmmModelResults[i].progress;
-          if(this._model.configuration.default_parameters.hierarchical) {
+        for (let i = 0; i < this._model.models.length; i++) {
+          res.timeProgressions[i] = this._modelResults.singleClassHmmModelResults[i].progress;
+          if (this._model.configuration.default_parameters.hierarchical) {
             res.alphas[i]
               = this._modelResults.singleClassHmmModelResults[i].alpha_h[0];
           } else {
@@ -98,7 +97,7 @@ class HhmmDecoder {
           }
         }
 
-        if(this._model.shared_parameters.bimodal) {
+        if (this._model.shared_parameters.bimodal) {
           res['outputValues'] = this._modelResults.output_values.slice(0);
           res['outputCovariance']
               = this._modelResults.output_covariance.slice(0);
@@ -157,7 +156,7 @@ class HhmmDecoder {
   }
 
   set model(model) {
-    _setModel(model);
+    this._setModel(model);
   }
 
   /** @private */
