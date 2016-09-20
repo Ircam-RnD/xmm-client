@@ -450,10 +450,10 @@ export const hhmmForwardInit = (obsIn, hm, hmRes) => {
       mRes.alpha_h[0][0] = hm.prior[i];
       //---------------------------------------------------------------- bimodal
       if (hm.shared_parameters.bimodal) {
-        mRes.alpha_h[0][0] *= gmmUtils.gmmObsProbInput(obsIn, m.states[k]);
+        mRes.alpha_h[0][0] *= gmmUtils.gmmObsProbInput(obsIn, m.states[0]);
       //--------------------------------------------------------------- unimodal
       } else {
-        mRes.alpha_h[0][0] *= gmmUtils.gmmObsProb(obsIn, m.states[k]);
+        mRes.alpha_h[0][0] *= gmmUtils.gmmObsProb(obsIn, m.states[0]);
       }
       mRes.instant_likelihood = mRes.alpha_h[0][0];
     }
