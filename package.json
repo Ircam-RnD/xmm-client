@@ -4,6 +4,7 @@
   "description": "JavaScript XMM utilities for the browser, including model decoders",
   "main": "dist/index.js",
   "license": "GPL-3.0",
+  "standalone": "xmmClient",
   "repository": {
     "type": "git",
     "url": "https://github.com/Ircam-RnD/xmm-client"
