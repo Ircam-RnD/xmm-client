@@ -114,7 +114,9 @@ class HhmmDecoder {
    * Resets the intermediate results of the estimation (shortcut for reloading the model).
    */
   reset() {
-    this._setModel(this._model);
+    if (this._model !== undefined) {
+      this._setModel(this._model);
+    }
   }
 
   //========================== GETTERS / SETTERS =============================//
