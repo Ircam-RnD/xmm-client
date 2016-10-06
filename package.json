@@ -15,6 +15,7 @@
     "bundle": "node ./bin/runner --bundle",
     "transpile": "node ./bin/runner --transpile",
     "watch": "node ./bin/runner --watch",
+    "docs": "jsdoc -c conf.json",
     "test": "babel-tape-runner \"tests/*.js\""
   },
   "jshintConfig": {

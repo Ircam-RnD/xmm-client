@@ -132,7 +132,7 @@ class GmmDecoder {
   }
 
   set model(model) {
-    _setModel(model);
+    this._setModel(model);
   }
 
   /** @private */
