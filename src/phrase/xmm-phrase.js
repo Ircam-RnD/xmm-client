@@ -111,6 +111,8 @@ class PhraseMaker {
 	 * @throws Will throw an error if the input vector doesn't match the config.
 	 */
 	addObservation(obs) {
+		// todo : add tests that throw the right exceptions
+		
 		if (obs.length !== this._config.dimension ||
 				(typeof(obs) === 'number' && this._config.dimension !== 1)) {
 			console.error(
@@ -118,6 +120,16 @@ class PhraseMaker {
 			);
 			throw 'BadVectorSizeException';
 			return;
+		}
+
+		for (let val of obs) {
+			if (typeof(val) !== 'number') {
+				console.error(
+					'error : observation values must all be numbers'
+				);
+				throw 'BadDataTypeException';
+				return;
+			}
 		}
 
 		if (this._config.bimodal) {

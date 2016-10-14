@@ -167,6 +167,8 @@ class HhmmDecoder {
     this._model = undefined;
     this._modelResults = undefined;
 
+    if (!model) return;
+
     // test if model is valid here (TODO : write a better test)
     if (model.models !== undefined) {
       this._model = model;
