@@ -1,4 +1,4 @@
-## xmm-client
+# xmm-client
 ### XMM models decoders for the browser
 
 This library is intended to be used with the
