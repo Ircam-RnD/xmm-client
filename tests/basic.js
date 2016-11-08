@@ -22,12 +22,28 @@ test('basic', (t) => {
 	const gmmConfigMsg = 'GmmDecoder configuration should not change when replaced by itself'
 	t.deepEqual(gmm.config, gmmConfig, gmmConfigMsg);
 
-	// pm.config = {
-	// 	bimodal: false,
-	// 	dimension: 6
-	// };
-
 	t.end();
 });
+
+// test('trainingset', (t) => {
+// 	const pm = new xmm.PhraseMaker({
+// 		columnNames: ['a'],
+// 		label: 'someLabel'
+// 	});
+// 	const sm = new xmm.SetMaker();
+
+// 	// console.log('phrase config : ' + JSON.stringify(pm.config));
+// 	for (let p = 0; p < 3; p++) {
+// 		for (let i = 0; i < 10; i++) {
+// 			pm.addObservation([Math.random()]);
+// 		}
+// 		sm.addPhrase(pm.getPhrase());
+// 		pm.setConfig({ label: "z"});
+// 		// pm.setConfig({dimension: 2});
+// 	}
+// 	// console.log(JSON.stringify(sm.getTrainingSet()));
+// 	// console.log(JSON.stringify(sm.getPhrasesOfLabel("z")));
+// 	t.end();
+// });
 
 // find a way to load json files (models)

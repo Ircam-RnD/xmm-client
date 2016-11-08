@@ -59,13 +59,14 @@ class HhmmDecoder {
   /**
    * The decoding function.
    * @param {Array.number} observation - An input float vector to be estimated.
-   * @param {HhmmResultsCallback} resultsCallback - The callback handling the estimation results.
+   * @param {HhmmResultsCallback} [resultsCallback=null] - The callback handling the estimation results.
+   * @returns {HhmmResults} results - The estimation results.
    */
-  filter(observation, resultsCallback) {
+  filter(observation, resultsCallback = null) {
     let err = null;
     let res = null;
 
-    if(this._model === undefined) {
+    if(!this._model) {
       err = 'no model loaded yet';
     } else {
       //console.log(observation);
@@ -107,7 +108,10 @@ class HhmmDecoder {
       }
     }
 
-    resultsCallback(err, res);
+    if (resultsCallback) {
+      resultsCallback(err, res);
+    }
+    return res;
   }
 
   /**
@@ -315,6 +319,18 @@ class HhmmDecoder {
   get nbClasses() {
     if (this._model !== undefined) {
       return this._model.models.length;
+    }
+    return 0;
+  }
+
+  /**
+   * Size of the regression vector if model is bimodal.
+   * @readonly
+   * @type {Number}
+   */
+  get regressionSize() {
+    if (this._model !== undefined) {
+      return this._model.shared_parameters.dimension_input;
     }
     return 0;
   }

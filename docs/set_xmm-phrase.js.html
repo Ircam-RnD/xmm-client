@@ -1,6 +1,38 @@
-/**
- * XMM compatible phrase builder utility <br />
- * Class to ease the creation of XMM compatible data recordings, aka phrases. <br />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Documentation - Source: set/xmm-phrase.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/overrides.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <!-- if home page assume a title is already present in README -->
+    
+    <h1 class="page-title">Source: set/xmm-phrase.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * XMM compatible phrase builder utility &lt;br />
+ * Class to ease the creation of XMM compatible data recordings, aka phrases. &lt;br />
  * Phrases are typically arrays (flattened matrices) of size N * M,
  * N being the size of a vector element, and M the length of the phrase itself,
  * wrapped together in an object with a few settings.
@@ -14,13 +46,13 @@ class PhraseMaker {
    * @type {Object}
    * @name XmmPhraseConfig
    * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
-   * If true, the <code>dimension_input</code> property will be taken into account.
+   * If true, the &lt;code>dimension_input&lt;/code> property will be taken into account.
    * @property {Number} dimension - Size of a phrase's vector element.
    * @property {Number} dimensionInput - Size of the part of an input vector element that should be used for training.
-   * This implies that the rest of the vector (of size <code>dimension - dimension_input</code>)
-   * will be used for regression. Only taken into account if <code>bimodal</code> is true.
+   * This implies that the rest of the vector (of size &lt;code>dimension - dimension_input&lt;/code>)
+   * will be used for regression. Only taken into account if &lt;code>bimodal&lt;/code> is true.
    * @property {Array.String} column_names - Array of string identifiers describing each scalar of the phrase's vector elements.
-   * Typically of size <code>dimension</code>.
+   * Typically of size &lt;code>dimension&lt;/code>.
    * @property {String} label - The string identifier of the class the phrase belongs to.
    */
 
@@ -82,26 +114,26 @@ class PhraseMaker {
    * @type {Object}
    * @name XmmPhrase
    * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
-   * If true, the <code>dimension_input</code> property will be taken into account.
+   * If true, the &lt;code>dimension_input&lt;/code> property will be taken into account.
    * @property {Number} dimension - Size of a phrase's vector element.
    * @property {Number} dimension_input - Size of the part of an input vector element that should be used for training.
-   * This implies that the rest of the vector (of size <code>dimension - dimension_input</code>)
-   * will be used for regression. Only taken into account if <code>bimodal</code> is true.
+   * This implies that the rest of the vector (of size &lt;code>dimension - dimension_input&lt;/code>)
+   * will be used for regression. Only taken into account if &lt;code>bimodal&lt;/code> is true.
    * @property {Array.String} column_names - Array of string identifiers describing each scalar of the phrase's vector elements.
-   * Typically of size <code>dimension</code>.
+   * Typically of size &lt;code>dimension&lt;/code>.
    * @property {String} label - The string identifier of the class the phrase belongs to.
    * @property {Array.Number} data - The phrase's data, containing all the vectors flattened into a single one.
-   * Only taken into account if <code>bimodal</code> is false.
+   * Only taken into account if &lt;code>bimodal&lt;/code> is false.
    * @property {Array.Number} data_input - The phrase's data which will be used for training, flattened into a single vector.
-   * Only taken into account if <code>bimodal</code> is true.
+   * Only taken into account if &lt;code>bimodal&lt;/code> is true.
    * @property {Array.Number} data_output - The phrase's data which will be used for regression, flattened into a single vector.
-   * Only taken into account if <code>bimodal</code> is true.
+   * Only taken into account if &lt;code>bimodal&lt;/code> is true.
    * @property {Number} length - The length of the phrase, e.g. one of the following :
-   * <li style="list-style-type: none;">
-   * <ul><code>data.length / dimension</code></ul>
-   * <ul><code>data_input.length / dimension_input</code></ul>
-   * <ul><code>data_output.length / dimension_output</code></ul>
-   * </li>
+   * &lt;li style="list-style-type: none;">
+   * &lt;ul>&lt;code>data.length / dimension&lt;/code>&lt;/ul>
+   * &lt;ul>&lt;code>data_input.length / dimension_input&lt;/code>&lt;/ul>
+   * &lt;ul>&lt;code>data_output.length / dimension_output&lt;/code>&lt;/ul>
+   * &lt;/li>
    */
 
   /**
@@ -114,8 +146,8 @@ class PhraseMaker {
   }
 
   /**
-   * Append an observation vector to the phrase's data. Must be of length <code>dimension</code>.
-   * @param {Array.Number} obs - An input vector, aka observation. If <code>bimodal</code> is true
+   * Append an observation vector to the phrase's data. Must be of length &lt;code>dimension&lt;/code>.
+   * @param {Array.Number} obs - An input vector, aka observation. If &lt;code>bimodal&lt;/code> is true
    * @throws Will throw an error if the input vector doesn't match the config.
    */
   addObservation(obs) {
@@ -124,7 +156,7 @@ class PhraseMaker {
     const badTypeMsg = 'Bad data type: all observation values must be numbers';
 
     if (obs.length !== this._config.dimension ||
-        (typeof(obs) === 'number' && this._config.dimension !== 1)) {
+        (typeof(obs) === 'number' &amp;&amp; this._config.dimension !== 1)) {
       throw new Error(badLengthMsg);
     }
 
@@ -167,19 +199,41 @@ class PhraseMaker {
   /** @private */
   _setConfig(options = {}) {
     for (let prop in options) {
-      if (prop === 'bimodal' && typeof(options[prop]) === 'boolean') {
+      if (prop === 'bimodal' &amp;&amp; typeof(options[prop]) === 'boolean') {
         this._config[prop] = options[prop];
-      } else if (prop === 'dimension' && Number.isInteger(options[prop])) {
+      } else if (prop === 'dimension' &amp;&amp; Number.isInteger(options[prop])) {
         this._config[prop] = options[prop];
-      } else if (prop === 'dimensionInput' && Number.isInteger(options[prop])) {
+      } else if (prop === 'dimensionInput' &amp;&amp; Number.isInteger(options[prop])) {
         this._config[prop] = options[prop];
-      } else if (prop === 'columnNames' && Array.isArray(options[prop])) {
+      } else if (prop === 'columnNames' &amp;&amp; Array.isArray(options[prop])) {
         this._config[prop] = options[prop].slice(0);
-      } else if (prop === 'label' && typeof(options[prop]) === 'string') {
+      } else if (prop === 'label' &amp;&amp; typeof(options[prop]) === 'string') {
         this._config[prop] = options[prop];
       }
     }   
   }
 };
 
-export default PhraseMaker;
+export default PhraseMaker;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GmmDecoder.html">GmmDecoder</a></li><li><a href="HhmmDecoder.html">HhmmDecoder</a></li><li><a href="PhraseMaker.html">PhraseMaker</a></li><li><a href="SetMaker.html">SetMaker</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Nov 09 2016 00:34:52 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

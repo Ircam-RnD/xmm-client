@@ -22,7 +22,7 @@ Object.defineProperty(exports, 'HhmmDecoder', {
   }
 });
 
-var _xmmPhrase = require('./phrase/xmm-phrase');
+var _xmmPhrase = require('./set/xmm-phrase');
 
 Object.defineProperty(exports, 'PhraseMaker', {
   enumerable: true,
@@ -31,5 +31,14 @@ Object.defineProperty(exports, 'PhraseMaker', {
   }
 });
 
+var _xmmSet = require('./set/xmm-set');
+
+Object.defineProperty(exports, 'SetMaker', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_xmmSet).default;
+  }
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OytDQUFTLE87Ozs7Ozs7OztnREFDQSxPOzs7Ozs7Ozs7OENBQ0EsTyIsImZpbGUiOiJpbmRleC5qcyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCB7IGRlZmF1bHQgYXMgR21tRGVjb2RlciB9IGZyb20gJy4vZ21tL2dtbS1kZWNvZGVyJztcbmV4cG9ydCB7IGRlZmF1bHQgYXMgSGhtbURlY29kZXIgfSBmcm9tICcuL2hobW0vaGhtbS1kZWNvZGVyJztcbmV4cG9ydCB7IGRlZmF1bHQgYXMgUGhyYXNlTWFrZXIgfSBmcm9tICcuL3BocmFzZS94bW0tcGhyYXNlJzsiXX0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OytDQUFTLE87Ozs7Ozs7OztnREFDQSxPOzs7Ozs7Ozs7OENBQ0EsTzs7Ozs7Ozs7OzJDQUNBLE8iLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgeyBkZWZhdWx0IGFzIEdtbURlY29kZXIgfSBmcm9tICcuL2dtbS9nbW0tZGVjb2Rlcic7XG5leHBvcnQgeyBkZWZhdWx0IGFzIEhobW1EZWNvZGVyIH0gZnJvbSAnLi9oaG1tL2hobW0tZGVjb2Rlcic7XG5leHBvcnQgeyBkZWZhdWx0IGFzIFBocmFzZU1ha2VyIH0gZnJvbSAnLi9zZXQveG1tLXBocmFzZSc7XG5leHBvcnQgeyBkZWZhdWx0IGFzIFNldE1ha2VyIH0gZnJvbSAnLi9zZXQveG1tLXNldCciXX0=

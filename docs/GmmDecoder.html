@@ -264,7 +264,7 @@ If the model was trained for regression, outputs an estimation of the associated
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line227">line 227</a>
+        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line231">line 231</a>
     </li></ul></dd>
     
 
@@ -336,7 +336,7 @@ If the model was trained for regression, outputs an estimation of the associated
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line103">line 103</a>
+        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line107">line 107</a>
     </li></ul></dd>
     
 
@@ -409,7 +409,7 @@ It is mandatory for the class to have a model in order to do its job.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line127">line 127</a>
+        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line131">line 131</a>
     </li></ul></dd>
     
 
@@ -481,7 +481,79 @@ It is mandatory for the class to have a model in order to do its job.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line241">line 241</a>
+        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line245">line 245</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="regressionSize"><span class="type-signature">(readonly) </span>regressionSize<span class="type-signature"> :Number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Size of the regression vector if model is bimodal.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line257">line 257</a>
     </li></ul></dd>
     
 
@@ -508,7 +580,7 @@ It is mandatory for the class to have a model in order to do its job.</p>
 
     
 
-    <h4 class="name" id="filter"><span class="type-signature"></span>filter<span class="signature">(observation, resultsCallback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="filter"><span class="type-signature"></span>filter<span class="signature">(observation, resultsCallback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="global.html#GmmResults">GmmResults</a>}</span></h4>
 
     
 
@@ -539,7 +611,11 @@ It is mandatory for the class to have a model in order to do its job.</p>
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -564,7 +640,19 @@ It is mandatory for the class to have a model in order to do its job.</p>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last"><p>An input float vector to be estimated.</p></td>
@@ -587,7 +675,23 @@ It is mandatory for the class to have a model in order to do its job.</p>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
             
 
             <td class="description last"><p>The callback handling the estimation results.</p></td>
@@ -631,7 +735,7 @@ It is mandatory for the class to have a model in order to do its job.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line62">line 62</a>
+        <a href="gmm_gmm-decoder.js.html">gmm/gmm-decoder.js</a>, <a href="gmm_gmm-decoder.js.html#line63">line 63</a>
     </li></ul></dd>
     
 
@@ -654,6 +758,28 @@ It is mandatory for the class to have a model in order to do its job.</p>
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>results - The estimation results.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="global.html#GmmResults">GmmResults</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -673,13 +799,13 @@ It is mandatory for the class to have a model in order to do its job.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GmmDecoder.html">GmmDecoder</a></li><li><a href="HhmmDecoder.html">HhmmDecoder</a></li><li><a href="PhraseMaker.html">PhraseMaker</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GmmDecoder.html">GmmDecoder</a></li><li><a href="HhmmDecoder.html">HhmmDecoder</a></li><li><a href="PhraseMaker.html">PhraseMaker</a></li><li><a href="SetMaker.html">SetMaker</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Oct 17 2016 17:20:50 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Nov 09 2016 00:34:52 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

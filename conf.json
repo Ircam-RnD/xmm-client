@@ -2,7 +2,7 @@
 	"source": {
     "include": [
     	"README.md",
-    	"src/phrase",
+    	"src/set",
     	"src/gmm",
     	"src/hhmm"
     ],

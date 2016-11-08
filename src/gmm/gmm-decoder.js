@@ -57,13 +57,14 @@ class GmmDecoder {
   /**
    * The decoding function.
    * @param {Array} observation - An input float vector to be estimated.
-   * @param {GmmResultsCallback} resultsCallback - The callback handling the estimation results.
+   * @param {GmmResultsCallback} [resultsCallback=null] - The callback handling the estimation results.
+   * @returns {GmmResults} results - The estimation results.
    */
-  filter(observation, resultsCallback) {
+  filter(observation, resultsCallback = null) {
     let err = null;
     let res = null;
 
-    if(this._model === undefined) {
+    if(!this._model) {
       console.log("no model loaded");
       return;
     } else {
@@ -91,7 +92,10 @@ class GmmDecoder {
       }
     }
 
-    resultsCallback(err, res);
+    if (resultsCallback) {
+      resultsCallback(err, res);
+    }
+    return res;
   }
 
   //=========================== GETTERS / SETTERS ============================//
@@ -110,13 +114,13 @@ class GmmDecoder {
 
     const res = this._modelResults.singleClassModelResults;
 
-    for (let i=0; i<this._model.models.length; i++) {
+    for (let i = 0; i < this._model.models.length; i++) {
       res[i].likelihood_buffer = new Array(this._likelihoodWindow);
 
-      for (let j=0; j<this._likelihoodWindow; j++) {
+      for (let j = 0; j < this._likelihoodWindow; j++) {
         res.likelihood_buffer[j] = 1 / this._likelihoodWindow;
       }
-    }
+    }    
   }
 
   /**
@@ -239,8 +243,20 @@ class GmmDecoder {
    * @type {Number}
    */
   get nbClasses() {
-    if(this._model !== undefined) {
+    if (this._model !== undefined) {
       return this._model.models.length;
+    }
+    return 0;
+  }
+
+  /**
+   * Size of the regression vector if model is bimodal.
+   * @readonly
+   * @type {Number}
+   */
+  get regressionSize() {
+    if (this._model !== undefined) {
+      return this._model.shared_parameters.dimension_input;
     }
     return 0;
   }
