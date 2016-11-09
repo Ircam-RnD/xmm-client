@@ -25,6 +25,10 @@ test('basic', (t) => {
 	t.end();
 });
 
+// test('hhmm', (t) => {
+// todo : serve json model and set files, play examples from set
+// });
+
 // test('trainingset', (t) => {
 // 	const pm = new xmm.PhraseMaker({
 // 		columnNames: ['a'],

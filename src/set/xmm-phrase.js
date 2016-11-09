@@ -110,9 +110,25 @@ class PhraseMaker {
    * @type {XmmPhrase}
    */
   get phrase() {
-    return this.getPhrase();
+    return this._getPhrase();
   }
 
+  /** @private */
+  _getPhrase() {
+    return {
+      bimodal: this._config.bimodal,
+      column_names: this._config.columnNames,
+      dimension: this._config.dimension,
+      dimension_input: this._config.dimensionInput,
+      label: this._config.label,
+      data: this._data.slice(0),
+      data_input: this._dataIn.slice(0),
+      data_output: this._dataOut.slice(0),
+      length: this._config.bimodal
+            ? this._dataIn.length / this._config.dimensionInput
+            : this._data.length / this._config.dimension
+    };
+  }
   /**
    * Append an observation vector to the phrase's data. Must be of length <code>dimension</code>.
    * @param {Array.Number} obs - An input vector, aka observation. If <code>bimodal</code> is true
