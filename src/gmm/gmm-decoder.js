@@ -110,15 +110,20 @@ class GmmDecoder {
 
   set likelihoodWindow(newWindowSize) {
     this._likelihoodWindow = newWindowSize;
+    this._updateLikelihoodWindow();
+  }
+
+  /** @private */
+  _updateLikelihoodWindow() {
     if (this._model === undefined) return;
 
-    const res = this._modelResults.singleClassModelResults;
+    const res = this._modelResults.singleClassGmmModelResults;
 
     for (let i = 0; i < this._model.models.length; i++) {
       res[i].likelihood_buffer = new Array(this._likelihoodWindow);
 
       for (let j = 0; j < this._likelihoodWindow; j++) {
-        res.likelihood_buffer[j] = 1 / this._likelihoodWindow;
+        res[i].likelihood_buffer[j] = 1 / this._likelihoodWindow;
       }
     }    
   }
@@ -130,7 +135,7 @@ class GmmDecoder {
    */
   get model() {
     if (this._model !== undefined) {
-      return JSON.fromString(JSON.stringify(this._model));
+      return JSON.parse(JSON.stringify(this._model));
     }
     return undefined;
   }
