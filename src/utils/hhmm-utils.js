@@ -9,9 +9,6 @@ import * as gmmUtils from './gmm-utils';
 // ================================= //
 
 export const hmmRegression = (obsIn, m, mRes) => {
-// export const hmmRegression = (obsIn, hmm, hmmRes) => {
-//   const m = hmm;
-//   const mRes = hmmRes;
   const dim = m.states[0].components[0].dimension;
   const dimIn = m.states[0].components[0].dimension_input;
   const dimOut = dim - dimIn;
@@ -139,9 +136,6 @@ export const hmmRegression = (obsIn, m, mRes) => {
 
 
 export const hmmForwardInit = (obsIn, m, mRes, obsOut = []) => {
-// export const hmmForwardInit = (obsIn, hmm, hmmRes, obsOut = []) => {
-//   const m = hmm;
-//   const mRes = hmmRes;
   const nstates = m.parameters.states;
   let normConst = 0.0;
 
@@ -204,9 +198,6 @@ export const hmmForwardInit = (obsIn, m, mRes, obsOut = []) => {
 
 
 export const hmmForwardUpdate = (obsIn, m, mRes, obsOut = []) => {
-// export const hmmForwardUpdate = (obsIn, hmm, hmmRes, obsOut = []) => {
-//   const m = hmm;
-//   const mRes = hmmRes;
   const nstates = m.parameters.states;
   let normConst = 0.0;
 
@@ -260,9 +251,6 @@ export const hmmForwardUpdate = (obsIn, m, mRes, obsOut = []) => {
 
 
 export const hmmUpdateAlphaWindow = (m, mRes) => {
-// export const hmmUpdateAlphaWindow = (hmm, hmmRes) => {
-//   const m = hmm;
-//   const mRes = hmmRes;
   const nstates = m.parameters.states;
   
   mRes.likeliest_state = 0;
@@ -295,24 +283,24 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
   mRes.window_minindex = mRes.likeliest_state - nstates / 2;
   mRes.window_maxindex = mRes.likeliest_state + nstates / 2;
   mRes.window_minindex = (mRes.window_minindex >= 0)
-             ? mRes.window_minindex
-             : 0;
+                       ? mRes.window_minindex
+                       : 0;
   mRes.window_maxindex = (mRes.window_maxindex <= nstates)
-             ? mRes.window_maxindex
-             : nstates;
+                       ? mRes.window_maxindex
+                       : nstates;
   mRes.window_normalization_constant = 0;
   for (let i = mRes.window_minindex; i < mRes.window_maxindex; i++) {
-    mRes.window_normalization_constant
-      += (mRes.alpha_h[0][i] + mRes.alpha_h[1][i]);
+    mRes.window_normalization_constant += 
+        m.parameters.hierarchical
+      //----------------------------------------------------------- hierarchical
+      ? mRes.alpha_h[0][i] + mRes.alpha_h[1][i]
+      //------------------------------------------------------- non-hierarchical        
+      : mRes.alpha[i];
   }
 };
 
 
 export const hmmUpdateResults = (m, mRes) => {
-// export const hmmUpdateResults = (hmm, hmmRes) => {
-//   const m = hmm;
-//   const mRes = hmmRes;
-
   // IS THIS CORRECT  ? TODO : CHECK AGAIN (seems to have precision issues)
   // AHA ! : NORMALLY LIKELIHOOD_BUFFER IS CIRCULAR : IS IT THE CASE HERE ?
   // SHOULD I "POP_FRONT" ? (seems that yes)
@@ -320,13 +308,14 @@ export const hmmUpdateResults = (m, mRes) => {
   //res.likelihood_buffer.push(Math.log(res.instant_likelihood));
 
   // NOW THIS IS BETTER (SHOULD WORK AS INTENDED)
+  const bufSize = mRes.likelihood_buffer.length;
   mRes.likelihood_buffer[mRes.likelihood_buffer_index]
     = Math.log(mRes.instant_likelihood);
+  // increment circular buffer index
   mRes.likelihood_buffer_index
-    = (mRes.likelihood_buffer_index + 1) % mRes.likelihood_buffer.length;
+    = (mRes.likelihood_buffer_index + 1) % bufSize;
 
   mRes.log_likelihood = 0;
-  const bufSize = mRes.likelihood_buffer.length;
   for (let i = 0; i < bufSize; i++) {
     mRes.log_likelihood += mRes.likelihood_buffer[i];
   }
@@ -352,9 +341,6 @@ export const hmmUpdateResults = (m, mRes) => {
 
 
 export const hmmFilter = (obsIn, m, mRes) => {
-// export const hmmFilter = (obsIn, hmm, hmmRes) => {
-//   const m = hmm;
-//   const mRes = hmmRes;
   let ct = 0.0;
   if (mRes.forward_initialized) {
     ct = hmmForwardUpdate(obsIn, m, mRes);
@@ -383,10 +369,6 @@ export const hmmFilter = (obsIn, m, mRes) => {
 // ================================= //
 
 export const hhmmLikelihoodAlpha = (exitNum, likelihoodVec, hm, hmRes) => {
-// export const hhmmLikelihoodAlpha = (exitNum, likelihoodVec, hhmm, hhmmRes) => {
-//   const m = hhmm;
-//   const mRes = hhmmRes;
-
   if (exitNum < 0) {
     for (let i = 0; i < hm.models.length; i++) {
       likelihoodVec[i] = 0;
@@ -412,9 +394,6 @@ export const hhmmLikelihoodAlpha = (exitNum, likelihoodVec, hm, hmRes) => {
 //============================================ FORWARD INIT
 
 export const hhmmForwardInit = (obsIn, hm, hmRes) => {
-// export const hhmmForwardInit = (obsIn, hhmm, hhmmRes) => {
-//   const hm = hhmm;
-//   const hmRes = hhmmRes;
   let norm_const = 0;
 
   //=================================== initialize alphas
@@ -478,9 +457,6 @@ export const hhmmForwardInit = (obsIn, hm, hmRes) => {
 //========================================== FORWARD UPDATE
 
 export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
-// export const hhmmForwardUpdate = (obsIn, hhmm, hhmmRes) => {
-//   const hm = hhmm;
-//   const hmRes = hhmmRes;
   const nmodels = hm.models.length;
 
   let norm_const = 0;
@@ -592,10 +568,6 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
 
 
 export const hhmmUpdateResults = (hm, hmRes) => {
-// export const hhmmUpdateResults = (hhmm, hhmmRes) => {
-//   const hm = hhmm;
-//   const hmRes = hhmmRes;
-
   let maxlog_likelihood = 0;
   let normconst_instant = 0;
   let normconst_smoothed = 0;
@@ -628,10 +600,6 @@ export const hhmmUpdateResults = (hm, hmRes) => {
 
 
 export const hhmmFilter = (obsIn, hm, hmRes) => {
-// export const hhmmFilter = (obsIn, hhmm, hhmmRes) => {
-//   const hm = hhmm;
-//   const hmRes = hhmmRes;
-
   //--------------------------------------------------------------- hierarchical
   if (hm.configuration.default_parameters.hierarchical) {
     if (hmRes.forward_initialized) {

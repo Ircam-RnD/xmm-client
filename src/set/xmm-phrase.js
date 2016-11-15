@@ -10,9 +10,9 @@
 class PhraseMaker {
   /**
    * XMM phrase configuration object.
-   * @typedef XmmPhraseConfig
+   * @typedef xmmPhraseConfig
    * @type {Object}
-   * @name XmmPhraseConfig
+   * @name xmmPhraseConfig
    * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
    * If true, the <code>dimension_input</code> property will be taken into account.
    * @property {Number} dimension - Size of a phrase's vector element.
@@ -25,7 +25,7 @@ class PhraseMaker {
    */
 
   /**
-   * @param {XmmPhraseConfig} options - Default phrase configuration.
+   * @param {xmmPhraseConfig} options - Default phrase configuration.
    * @see {@link config}.
    */
   constructor(options = {}) {
@@ -43,19 +43,19 @@ class PhraseMaker {
     this.reset();
   }
 
-  /**
+  /***
    * XMM phrase configuration object.
    * Only legal fields will be checked before being added to the config, others will be ignored
    * @type {XmmPhraseConfig}
    * @deprecated since version 0.2.0
    */
-  get config() {
-    return this._config;
-  }
+  // get config() {
+  //   return this._config;
+  // }
 
-  set config(options = {}) {
-    this._setConfig(options);
-  }
+  // set config(options = {}) {
+  //   this._setConfig(options);
+  // }
 
   // new API (b-ma tip : don' use accessors if there is some magic behind,
   // which is the case in _setConfig)
@@ -63,6 +63,7 @@ class PhraseMaker {
 
   /**
    * Returns the current configuration.
+   * @returns {xmmPhraseConfig}
    */
   getConfig() {
     return this._config;
@@ -70,65 +71,29 @@ class PhraseMaker {
 
   /**
    * Updates the current configuration with the provided information.
-   * @param {XmmPhraseConfig} options
+   * @param {xmmPhraseConfig} options
    */
   setConfig(options = {}) {
     this._setConfig(options);
   }
 
-  /**
-   * A valid XMM phrase, ready to be processed by the XMM library.
-   * @typedef XmmPhrase
-   * @type {Object}
-   * @name XmmPhrase
-   * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
-   * If true, the <code>dimension_input</code> property will be taken into account.
-   * @property {Number} dimension - Size of a phrase's vector element.
-   * @property {Number} dimension_input - Size of the part of an input vector element that should be used for training.
-   * This implies that the rest of the vector (of size <code>dimension - dimension_input</code>)
-   * will be used for regression. Only taken into account if <code>bimodal</code> is true.
-   * @property {Array.String} column_names - Array of string identifiers describing each scalar of the phrase's vector elements.
-   * Typically of size <code>dimension</code>.
-   * @property {String} label - The string identifier of the class the phrase belongs to.
-   * @property {Array.Number} data - The phrase's data, containing all the vectors flattened into a single one.
-   * Only taken into account if <code>bimodal</code> is false.
-   * @property {Array.Number} data_input - The phrase's data which will be used for training, flattened into a single vector.
-   * Only taken into account if <code>bimodal</code> is true.
-   * @property {Array.Number} data_output - The phrase's data which will be used for regression, flattened into a single vector.
-   * Only taken into account if <code>bimodal</code> is true.
-   * @property {Number} length - The length of the phrase, e.g. one of the following :
-   * <li style="list-style-type: none;">
-   * <ul><code>data.length / dimension</code></ul>
-   * <ul><code>data_input.length / dimension_input</code></ul>
-   * <ul><code>data_output.length / dimension_output</code></ul>
-   * </li>
-   */
-
-  /**
-   * A valid XMM phrase, ready to be processed by the XMM library.
-   * @readonly
-   * @type {XmmPhrase}
-   */
-  get phrase() {
-    return this._getPhrase();
-  }
-
   /** @private */
-  _getPhrase() {
-    return {
-      bimodal: this._config.bimodal,
-      column_names: this._config.columnNames,
-      dimension: this._config.dimension,
-      dimension_input: this._config.dimensionInput,
-      label: this._config.label,
-      data: this._data.slice(0),
-      data_input: this._dataIn.slice(0),
-      data_output: this._dataOut.slice(0),
-      length: this._config.bimodal
-            ? this._dataIn.length / this._config.dimensionInput
-            : this._data.length / this._config.dimension
-    };
+  _setConfig(options = {}) {
+    for (let prop in options) {
+      if (prop === 'bimodal' && typeof(options[prop]) === 'boolean') {
+        this._config[prop] = options[prop];
+      } else if (prop === 'dimension' && Number.isInteger(options[prop])) {
+        this._config[prop] = options[prop];
+      } else if (prop === 'dimensionInput' && Number.isInteger(options[prop])) {
+        this._config[prop] = options[prop];
+      } else if (prop === 'columnNames' && Array.isArray(options[prop])) {
+        this._config[prop] = options[prop].slice(0);
+      } else if (prop === 'label' && typeof(options[prop]) === 'string') {
+        this._config[prop] = options[prop];
+      }
+    }   
   }
+
   /**
    * Append an observation vector to the phrase's data. Must be of length <code>dimension</code>.
    * @param {Array.Number} obs - An input vector, aka observation. If <code>bimodal</code> is true
@@ -172,29 +137,74 @@ class PhraseMaker {
   }
 
   /**
+   * A valid XMM phrase, ready to be processed by the XMM library.
+   * @typedef xmmPhrase
+   * @type {Object}
+   * @name xmmPhrase
+   * @property {Boolean} bimodal - Indicates wether phrase data should be considered bimodal.
+   * If true, the <code>dimension_input</code> property will be taken into account.
+   * @property {Number} dimension - Size of a phrase's vector element.
+   * @property {Number} dimension_input - Size of the part of an input vector element that should be used for training.
+   * This implies that the rest of the vector (of size <code>dimension - dimension_input</code>)
+   * will be used for regression. Only taken into account if <code>bimodal</code> is true.
+   * @property {Array.String} column_names - Array of string identifiers describing each scalar of the phrase's vector elements.
+   * Typically of size <code>dimension</code>.
+   * @property {String} label - The string identifier of the class the phrase belongs to.
+   * @property {Array.Number} data - The phrase's data, containing all the vectors flattened into a single one.
+   * Only taken into account if <code>bimodal</code> is false.
+   * @property {Array.Number} data_input - The phrase's data which will be used for training, flattened into a single vector.
+   * Only taken into account if <code>bimodal</code> is true.
+   * @property {Array.Number} data_output - The phrase's data which will be used for regression, flattened into a single vector.
+   * Only taken into account if <code>bimodal</code> is true.
+   * @property {Number} length - The length of the phrase, e.g. one of the following :
+   * <li style="list-style-type: none;">
+   * <ul><code>data.length / dimension</code></ul>
+   * <ul><code>data_input.length / dimension_input</code></ul>
+   * <ul><code>data_output.length / dimension_output</code></ul>
+   * </li>
+   */
+
+  /***
+   * A valid XMM phrase, ready to be processed by the XMM library.
+   * @readonly
+   * @type {xmmPhrase}
+   */
+  // get phrase() {
+  //   return this._getPhrase();
+  // }
+
+  /**
+   * Returns a valid XMM phrase created from the config and the recorded data.
+   * @returns {xmmPhrase}
+   */
+  getPhrase() {
+    return this._getPhrase();
+  }
+
+  /** @private */
+  _getPhrase() {
+    return {
+      bimodal: this._config.bimodal,
+      column_names: this._config.columnNames,
+      dimension: this._config.dimension,
+      dimension_input: this._config.dimensionInput,
+      label: this._config.label,
+      data: this._data.slice(0),
+      data_input: this._dataIn.slice(0),
+      data_output: this._dataOut.slice(0),
+      length: this._config.bimodal
+            ? this._dataIn.length / this._config.dimensionInput
+            : this._data.length / this._config.dimension
+    };
+  }
+
+  /**
    * Clear the phrase's data so that a new one is ready to be recorded.
    */
   reset() {
     this._data = [];
     this._dataIn = [];
     this._dataOut = [];
-  }
-
-  /** @private */
-  _setConfig(options = {}) {
-    for (let prop in options) {
-      if (prop === 'bimodal' && typeof(options[prop]) === 'boolean') {
-        this._config[prop] = options[prop];
-      } else if (prop === 'dimension' && Number.isInteger(options[prop])) {
-        this._config[prop] = options[prop];
-      } else if (prop === 'dimensionInput' && Number.isInteger(options[prop])) {
-        this._config[prop] = options[prop];
-      } else if (prop === 'columnNames' && Array.isArray(options[prop])) {
-        this._config[prop] = options[prop].slice(0);
-      } else if (prop === 'label' && typeof(options[prop]) === 'string') {
-        this._config[prop] = options[prop];
-      }
-    }   
   }
 };
 

@@ -21,17 +21,41 @@ class SetMaker {
     this._phrases = [];
   }
 
-  /**
+  /***
    * The current total number of phrases in the set.
    * @readonly
    */
-  get size() {
+  // get size() {
+  //   return this._phrases.length;
+  // }
+
+  /**
+   * A valid XMM training set, ready to be processed by the XMM library.
+   * @typedef xmmTrainingSet
+   * @type {Object}
+   * @name xmmTrainingSet
+   * @property {Boolean} bimodal - Indicates wether the set's phrases data should be considered bimodal.
+   * If true, the <code>dimension_input</code> property will be taken into account.
+   * @property {Number} dimension - Size of a vector element of the set's phrases.
+   * @property {Number} dimension_input - Size of the part of an input vector element that should be used for training.
+   * This implies that the rest of the vector (of size <code>dimension - dimension_input</code>)
+   * will be used for regression. Only taken into account if <code>bimodal</code> is true.
+   * @property {Array.String} column_names - Array of string identifiers describing each scalar of a phrase's vector elements.
+   * Typically of size <code>dimension</code>.
+   * @property {Array.xmmPhrase} phrases  - Array of valid XMM phrases containing an extra "index" field.
+   */
+
+  /**
+   * Get the total number of phrases actually in the set.
+   * @returns {Number}
+   */
+  getSize() {
     return this._phrases.length;
   }
 
   /**
    * Add an XMM phrase to the current set.
-   * @param {XmmPhrase} phrase - An XMM compatible phrase (ie created with the PhraseMaker class)
+   * @param {xmmPhrase} phrase - An XMM compatible phrase (ie created with the PhraseMaker class)
    */
   addPhrase(phrase) {
     if (this._phrases.length === 0) {
@@ -44,7 +68,7 @@ class SetMaker {
 
   /**
    * Add all phrases from another training set.
-   * @param {XmmTrainingSet} set - An XMM compatible training set.
+   * @param {xmmTrainingSet} set - An XMM compatible training set.
    */
   addTrainingSet(set) {
     if (this._phrases.length === 0) {
@@ -62,7 +86,7 @@ class SetMaker {
   /**
    * Get phrase at a particular index.
    * @param {Number} index - The index of the phrase to retrieve.
-   * @returns {XmmPhrase}
+   * @returns {xmmPhrase}
    */
   getPhrase(index) {
     if (index > -1 && index < this._phrases.length) {
@@ -85,7 +109,7 @@ class SetMaker {
   /**
    * Return the subset of phrases of a particular label.
    * @param {String} label - The label of the phrases from which to generate the sub-training set.
-   * @returns {XmmTrainingSet}
+   * @returns {xmmTrainingSet}
    */
   getPhrasesOfLabel(label) {
     const res = {};
@@ -122,7 +146,7 @@ class SetMaker {
 
   /**
    * Return the current training set.
-   * @returns {TrainingSet}
+   * @returns {xmmTrainingSet}
    */
   getTrainingSet() {
     let res = {};

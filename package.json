@@ -1,6 +1,6 @@
 {
   "name": "xmm-client",
-  "version": "1.0.0",
+  "version": "0.3.0",
   "description": "JavaScript XMM utilities for the browser, including model decoders",
   "main": "dist/index.js",
   "license": "GPL-3.0",
