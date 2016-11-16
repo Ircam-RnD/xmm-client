@@ -26,6 +26,10 @@ test('basic', (t) => {
   t.end();
 });
 
+/**
+ * Utility returning all the names of the folders located in a specific folder.
+ * @private
+ */
 const folderList = (prefix, subfolder = null) => {
   let path = prefix;
   if (subfolder) path += `/${subfolder}`;
