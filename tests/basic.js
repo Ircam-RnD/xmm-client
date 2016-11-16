@@ -57,7 +57,7 @@ test('hhmm', (t) => {
     const set = JSON.parse(fs.readFileSync(`${path}/trainingset.json`, 'utf-8'));
     const model = JSON.parse(fs.readFileSync(`${path}/model.json`, 'utf-8'));
 
-    hhmm.model = model;
+    hhmm.setModel(model);
 
     let totalObservations = 0;
     let positives = 0;
@@ -92,18 +92,18 @@ test('trainingset', (t) => {
   });
   const sm = new xmm.SetMaker();
 
-  console.log('phrase config : ' + JSON.stringify(pm.config));
+  console.log('phrase config : ' + JSON.stringify(pm.getConfig()));
 
   for (let p = 0; p < labels.length; p++) {
     pm.setConfig({ label: labels[p] });
     for (let i = 0; i < 10; i++) {
       pm.addObservation([Math.random(), Math.random()]);
     }
-    sm.addPhrase(pm.phrase);
+    sm.addPhrase(pm.getPhrase());
     // pm.setConfig({ label: "z"});
     // pm.setConfig({dimension: 2});
   }
-  console.log(JSON.parse(JSON.stringify(sm.getTrainingSet())));
+  // console.log(JSON.parse(JSON.stringify(sm.getTrainingSet())));
   // console.log(JSON.stringify(sm.getPhrasesOfLabel("z")));
   t.end();
 });
