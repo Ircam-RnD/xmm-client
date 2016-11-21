@@ -36,6 +36,8 @@ const hhmmDecoder = new HhmmDecoder();
 
 #### credits :
 
-This library is developed by the ISMM team at IRCAM, within the context of the RAPID-MIX project, funded by the European Union’s Horizon 2020 research and innovation programme.  
+This library is developed by the ISMM team at IRCAM, within the context of the
+[RAPID-MIX](http://rapidmix.goldsmithsdigital.com/) project, funded by the
+European Union’s Horizon 2020 research and innovation programme.  
 Original XMM code authored by Jules Françoise, ported to JavaScript by Joseph Larralde.  
 See [github.com/Ircam-RnD/xmm](https://github.com/Ircam-RnD/xmm) for detailed XMM credits.
