@@ -7,7 +7,7 @@ This library is intended to be used with the
 and training sets into statistical models, besides allowing to do exactly the same
 things as xmm-client, server-side.
 
-It contains 4 classes :
+xmm-client contains 4 classes :
 - PhraseMaker, which eases the creation of XMM-compatible phrases
 (e.g. time series recordings of dimension n), that can then be passed to XMM.
 - SetMaker, which eases the management of training sets, aka collections of Phrases.
