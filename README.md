@@ -1,5 +1,5 @@
 # xmm-client
-### XMM models decoders for the browser
+### XMM model decoders for the browser
 
 This library is intended to be used with the
 [original XMM library](https://github.com/Ircam-RnD/xmm), or its Node.js wrapper
@@ -9,7 +9,7 @@ things as xmm-client, server-side.
 
 xmm-client contains 4 classes :
 - PhraseMaker, which eases the creation of XMM-compatible phrases
-(e.g. time series recordings of dimension n, packed with metadata into JS objects),
+(i.e. time series recordings of dimension n, packed with metadata into JS objects),
 that can then be passed to XMM.
 - SetMaker, which eases the management of training sets, aka collections of Phrases.
 A SetMaker should only contain phrases with the same configuration (bimodality, dimension,
