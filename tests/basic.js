@@ -69,6 +69,7 @@ test('hhmm', (t) => {
     
       for (let j = 0; j < p['length']; j++) {
         const results = hhmm.filter(p['data'].slice(j * step, dim));
+        // console.log(results);
     
         if (p['label'] === results['likeliest']) {
           positives++;

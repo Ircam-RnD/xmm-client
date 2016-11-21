@@ -280,8 +280,8 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
     }
   }
 
-  mRes.window_minindex = mRes.likeliest_state - nstates / 2;
-  mRes.window_maxindex = mRes.likeliest_state + nstates / 2;
+  mRes.window_minindex = mRes.likeliest_state - Math.floor(nstates / 2);
+  mRes.window_maxindex = mRes.likeliest_state + Math.floor(nstates / 2);
   mRes.window_minindex = (mRes.window_minindex >= 0)
                        ? mRes.window_minindex
                        : 0;
@@ -290,12 +290,15 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
                        : nstates;
   mRes.window_normalization_constant = 0;
   for (let i = mRes.window_minindex; i < mRes.window_maxindex; i++) {
-    mRes.window_normalization_constant += 
-        m.parameters.hierarchical
-      //----------------------------------------------------------- hierarchical
-      ? mRes.alpha_h[0][i] + mRes.alpha_h[1][i]
-      //------------------------------------------------------- non-hierarchical        
-      : mRes.alpha[i];
+    //------------------------------------------------------------- hierarchical
+    if (m.parameters.hierarchical) {
+      mRes.window_normalization_constant +=
+        mRes.alpha_h[0][i] + mRes.alpha_h[1][i];
+    //--------------------------------------------------------- non-hierarchical
+    } else {
+      mRes.window_normalization_constant +=
+        mRes.alpha[i];
+    }
   }
 };
 
@@ -323,7 +326,8 @@ export const hmmUpdateResults = (m, mRes) => {
 
   mRes.progress = 0;
   for (let i = mRes.window_minindex; i < mRes.window_maxindex; i++) {
-    if (m.parameters.hierarchical) { // hierarchical
+    //------------------------------------------------------------- hierarchical
+    if (m.parameters.hierarchical) {
       mRes.progress
         += (
             mRes.alpha_h[0][i] +
@@ -331,11 +335,13 @@ export const hmmUpdateResults = (m, mRes) => {
             mRes.alpha_h[2][i]
           ) *
           i / mRes.window_normalization_constant;
-    } else { // non hierarchical
+    //--------------------------------------------------------- non hierarchical
+    } else {
       mRes.progress += mRes.alpha[i] *
                i / mRes.window_normalization_constant;
     }
   }
+
   mRes.progress /= (m.parameters.states - 1);
 };
 
