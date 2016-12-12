@@ -9,7 +9,6 @@
     "type": "git",
     "url": "https://github.com/Ircam-RnD/xmm-client"
   },
-  "private": true,
   "homepage": "https://github.com/Ircam-RnD/xmm-client",
   "scripts": {
     "bundle": "node ./bin/runner --bundle",
@@ -17,12 +16,6 @@
     "watch": "node ./bin/runner --watch",
     "docs": "jsdoc -c conf.json",
     "tests": "babel-tape-runner \"tests/*.js\""
-  },
-  "jshintConfig": {
-    "esnext": true,
-    "browser": true,
-    "node": true,
-    "devel": true
   },
   "babel": {
     "presets": ["es2015"]
