@@ -44,6 +44,24 @@ const folderList = (prefix, subfolder = null) => {
   return folders;
 }
 
+test('gmm', (t) => {
+  const prefix = './tests/data/hhmm';
+  const folders = folderList(prefix);
+
+  const gmm = new xmm.GmmDecoder();
+
+  for (let i = 0; i < folders.length; i++) {
+    const path = `${prefix}/${folders[i]}`;
+    const set = JSON.parse(fs.readFileSync(`${path}/trainingset.json`, 'utf-8'));
+
+    gmm.train(set, (err, res) => {
+      console.log(model);
+    });
+  }
+
+  t.end();
+});
+
 test('hhmm', (t) => {
   const prefix = './tests/data/hhmm';
   const folders = folderList(prefix);

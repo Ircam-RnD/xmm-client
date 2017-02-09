@@ -70,8 +70,6 @@ class HhmmDecoder {
     if(!this._model) {
       err = 'no model loaded yet';
     } else {
-      //console.log(observation);
-      //this._observation = observation;
       try {
         hhmmUtils.hhmmFilter(observation, this._model, this._modelResults);
 

@@ -66,12 +66,12 @@ class GmmDecoder {
     let res = null;
 
     if(!this._model) {
-      console.log("no model loaded");
-      return;
+      err = 'no model loaded yet';
     } else {
       try {
         gmmUtils.gmmFilter(observation, this._model, this._modelResults);         
 
+        // create results object from relevant modelResults values :
         const likeliest = (this._modelResults.likeliest > -1)
                         ? this._model.models[this._modelResults.likeliest].label
                         : 'unknown';
@@ -80,10 +80,10 @@ class GmmDecoder {
           likeliest: likeliest,
           likeliestIndex: this._modelResults.likeliest,
           likelihoods: likelihoods
-        }
+        };
 
         // add regression results to global results if bimodal :
-        if(this._model.shared_parameters.bimodal) {
+        if (this._model.shared_parameters.bimodal) {
           res['outputValues'] = this._modelResults.output_values.slice(0);
           res['outputCovariance']
               = this.modelResults.output_covariance.slice(0);
@@ -96,6 +96,7 @@ class GmmDecoder {
     if (resultsCallback) {
       resultsCallback(err, res);
     }
+    console.log(`err : ${err}, res : ${JSON.stringify(res)}`);
     return res;
   }
 
@@ -188,8 +189,11 @@ class GmmDecoder {
 
   /** @private */
   _setModel(model) {
+    
     this._model = undefined;
     this._modelResults = undefined;
+
+    if (!model) return;
 
     // test if model is valid here (TODO : write a better test)
     if (model.models !== undefined) {

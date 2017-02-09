@@ -310,7 +310,7 @@ export const gmmLikelihood = (obsIn, singleGmm, singleGmmRes, obsOut = []) => {
   
   for (let c = 0; c < components.length; c++) {
     //------------------------------------------------------------------ bimodal
-    if (singleClassGmmModel.components[c].bimodal) {
+    if (components[c].bimodal) {
       if (obsOut.length === 0) {
         mRes.beta[c]
           = gmmObsProbInput(obsIn, singleGmm, c);
