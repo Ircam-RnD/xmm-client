@@ -145,7 +145,9 @@ test('hhmm', (t) => {
         const step = p['dimension'];
       
         for (let j = 0; j < p['length']; j++) {
-          const results = hhmm.filter(p['data'].slice(j * step, dim));
+          const startIndex = j * step;
+          const endIndex = startIndex + dim;
+          const results = hhmm.filter(p['data'].slice(startIndex, endIndex));
           //console.log(results);
       
           if (p['label'] === results['likeliest']) {
@@ -197,11 +199,10 @@ test('gmm', (t) => {
         const p = set.phrases[i];
         const dim = p['dimension'] - p['dimension_input'];
         const step = p['dimension'];
-        //console.log(dim + ' ' + step);
       
         for (let j = 0; j < p['length']; j++) {
           const startIndex = j * step;
-          const endIndex = startIndex + dim
+          const endIndex = startIndex + dim;
           const results = gmm.filter(p['data'].slice(startIndex, endIndex));
           //console.log(results);
       
