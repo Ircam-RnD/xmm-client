@@ -165,7 +165,6 @@ test('hhmm', (t) => {
 });
 
 test('gmm', (t) => {
-  //const modelPrefix = './tests/data/models/gmm';
   const trainingSetPrefix = './tests/data/trainingsets';
   const trainingSetFolders = folderList(trainingSetPrefix);
 
