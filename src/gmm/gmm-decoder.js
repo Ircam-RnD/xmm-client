@@ -96,7 +96,7 @@ class GmmDecoder {
     if (resultsCallback) {
       resultsCallback(err, res);
     }
-    console.log(`err : ${err}, res : ${JSON.stringify(res)}`);
+
     return res;
   }
 

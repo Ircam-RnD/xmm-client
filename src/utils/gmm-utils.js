@@ -15,8 +15,6 @@
 
 // from xmmGaussianDistribution::regression
 export const gmmComponentRegression = (obsIn, predictOut, c) => {
-// export const gmmComponentRegression = (obsIn, predictOut, component) => {
-//   const c = component;
   const dim = c.dimension;
   const dimIn = c.dimension_input;
   const dimOut = dim - dimIn;
@@ -47,8 +45,6 @@ export const gmmComponentRegression = (obsIn, predictOut, c) => {
 
 
 export const gmmComponentLikelihood = (obsIn, c) => {
-// export const gmmComponentLikelihood = (obsIn, component) => {
-//   const c = component;
   // if(c.covariance_determinant === 0) {
   //  return undefined;
   // }
@@ -87,8 +83,6 @@ export const gmmComponentLikelihood = (obsIn, c) => {
 
 
 export const gmmComponentLikelihoodInput = (obsIn, c) => {
-// export const gmmComponentLikelihoodInput = (obsIn, component) => {
-//   const c = component;
   // if(c.covariance_determinant === 0) {
   //  return undefined;
   // }
@@ -129,8 +123,6 @@ export const gmmComponentLikelihoodInput = (obsIn, c) => {
 
 
 export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, c) => {
-// export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, component) => {
-//   const c = component;
   // if(c.covariance_determinant === 0) {
   //  return undefined;
   // }
@@ -190,10 +182,6 @@ export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, c) => {
 // ================================= //
 
 export const gmmRegression = (obsIn, m, mRes) => {
-// export const gmmRegression = (obsIn, singleGmm, singleGmmRes) => {
-//   const m = singleGmm;
-//   const mRes = singleGmmResults;
-
   const dim = m.components[0].dimension;
   const dimIn = m.components[0].dimension_input;
   const dimOut = dim - dimIn;
@@ -303,7 +291,6 @@ export const gmmObsProbBimodal = (obsIn, obsOut, singleGmm, component = -1) => {
 
 
 export const gmmLikelihood = (obsIn, singleGmm, singleGmmRes, obsOut = []) => {
-  const coeffs = singleGmm.mixture_coeffs;
   const components = singleGmm.components;
   const mRes = singleGmmRes;
   let likelihood = 0.0;
@@ -322,9 +309,11 @@ export const gmmLikelihood = (obsIn, singleGmm, singleGmmRes, obsOut = []) => {
     } else {
       mRes.beta[c] = gmmObsProb(obsIn, singleGmm, c);
     }
+
     likelihood += mRes.beta[c];
   }
-  for (let c = 0; c < coeffs.length; c++) {
+
+  for (let c = 0; c < components.length; c++) {
     mRes.beta[c] /= likelihood;
   }
 
@@ -335,12 +324,17 @@ export const gmmLikelihood = (obsIn, singleGmm, singleGmmRes, obsOut = []) => {
   //res.likelihood_buffer.unshift(likelihood);
   //res.likelihood_buffer.length--;
   // THIS IS BETTER (circular buffer)
+  const bufLength = mRes.likelihood_buffer.length;
   mRes.likelihood_buffer[mRes.likelihood_buffer_index] = likelihood;
   mRes.likelihood_buffer_index
-    = (mRes.likelihood_buffer_index + 1) % mRes.likelihood_buffer.length;
+    = (mRes.likelihood_buffer_index + 1) % bufLength;
   // sum all array values :
   mRes.log_likelihood = mRes.likelihood_buffer.reduce((a, b) => a + b, 0);
-  mRes.log_likelihood /= mRes.likelihood_buffer.length;
+  // mRes.log_likelihood = 0;
+  // for (let i = 0; i < bufLength; i++) {
+  //   mRes.log_likelihood += mRes.likelihood_buffer[i];
+  // }
+  mRes.log_likelihood /= bufLength;
 
   return likelihood;
 };
