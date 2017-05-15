@@ -325,7 +325,7 @@ export const gmmLikelihood = (obsIn, singleGmm, singleGmmRes, obsOut = []) => {
   //res.likelihood_buffer.length--;
   // THIS IS BETTER (circular buffer)
   const bufLength = mRes.likelihood_buffer.length;
-  mRes.likelihood_buffer[mRes.likelihood_buffer_index] = likelihood;
+  mRes.likelihood_buffer[mRes.likelihood_buffer_index] = Math.log(likelihood);
   mRes.likelihood_buffer_index
     = (mRes.likelihood_buffer_index + 1) % bufLength;
   // sum all array values :
