@@ -71,7 +71,6 @@ class HhmmDecoder {
       err = 'no model loaded yet';
     } else {
       try {
-        console.log('filter !');
         hhmmUtils.hhmmFilter(observation, this._model, this._modelResults);
 
         // create results object from relevant modelResults values :

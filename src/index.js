@@ -1,4 +1,4 @@
-/*
+/**
  * This library is developed by the ISMM (http://ismm.ircam.fr/) team at IRCAM,
  * within the context of the RAPID-MIX (http://rapidmix.goldsmithsdigital.com/)
  * project, funded by the European Union’s Horizon 2020 research and innovation programme.  
