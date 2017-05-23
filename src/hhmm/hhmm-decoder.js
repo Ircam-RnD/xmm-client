@@ -71,6 +71,7 @@ class HhmmDecoder {
       err = 'no model loaded yet';
     } else {
       try {
+        console.log('filter !');
         hhmmUtils.hhmmFilter(observation, this._model, this._modelResults);
 
         // create results object from relevant modelResults values :
@@ -266,9 +267,9 @@ class HhmmDecoder {
         const nstates = m.models[i].parameters.states;
 
         const alpha_h = new Array(3);
-        for (let j=0; j<3; j++) {
+        for (let j = 0; j < 3; j++) {
           alpha_h[j] = new Array(nstates);
-          for (let k=0; k<nstates; k++) {
+          for (let k = 0; k < nstates; k++) {
             alpha_h[j][k] = 0;
           }
         }
@@ -303,8 +304,8 @@ class HhmmDecoder {
           alpha: alpha,
           // for hierarchical :       
           alpha_h: alpha_h,
-          prior: new Array(nstates),
-          transition: new Array(nstates),
+          // prior: new Array(nstates),
+          // transition: new Array(nstates),
 
           // used in hmmUpdateAlphaWindow
           window_minindex: 0,

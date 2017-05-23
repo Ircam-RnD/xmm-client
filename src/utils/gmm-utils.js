@@ -75,9 +75,11 @@ export const gmmComponentLikelihood = (obsIn, c) => {
         Math.pow(2 * Math.PI, c.dimension)
       );
 
-  if (p < 1e-180 || isNaN(p) || isNaN(Math.abs(p))) {
+  //if (p < 1e-180 || isNaN(p) || !Number.isFinite(Math.abs(p))) {
+  if (p < 1e-180 || !Number.isFinite(p)) {
     p = 1e-180;
   }
+
   return p;
 };
 

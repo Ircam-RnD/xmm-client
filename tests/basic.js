@@ -153,6 +153,12 @@ test('hhmm', (t) => {
           if (p['label'] === results['likeliest']) {
             positives++;
           }
+
+          // for (let i = 0; i < results['likelihoods'].length; i++) {
+          //   if (isNaN(results['likelihoods'][i]))
+          //     console.log(results['likelihoods'][i]);
+          //   t.ok(!isNaN(results['likelihoods'][i]), 'likelihoods should be regular numbers');
+          // }
       
           totalObservations++;
         }
