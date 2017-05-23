@@ -301,8 +301,6 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
         mRes.alpha[i];
     }
   }
-
-  // console.log(mRes.window_minindex + ' '  + mRes.window_maxindex + ' ' + mRes.window_normalization_constant);
 };
 
 
@@ -573,9 +571,6 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
     for (let e = 0; e < 3; e++) {
       for (let k = 0; k < hm.models[i].parameters.states; k++) {
         hmRes.singleClassHmmModelResults[i].alpha_h[e][k] /= norm_const;
-        if (norm_const === 0) {
-          console.log(`alpha[${e}][${k}] : ${alpha[e][k]}`);
-        }
       }
     }
   }
@@ -604,13 +599,6 @@ export const hhmmUpdateResults = (hm, hmRes) => {
     if (i == 0 || hmRes.smoothed_log_likelihoods[i] > maxlog_likelihood) {
       maxlog_likelihood = hmRes.smoothed_log_likelihoods[i];
       hmRes.likeliest = i;
-    }
-  }
-
-  if (normconst_instant === 0 || normconst_smoothed === 0) {
-    for (let i = 0; i < hm.models.length; i++) {
-      let mRes = hmRes.singleClassHmmModelResults[i];
-      console.log(mRes.log_likelihood + ' ' + mRes.instant_likelihood);
     }
   }
 
