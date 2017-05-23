@@ -274,7 +274,7 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
     //--------------------------------------------------------- non-hierarchical        
     } else {
       if(mRes.alpha[i] > best_alpha) {
-        best_alpha = mRes.alpha[0];
+        best_alpha = mRes.alpha[i];
         mRes.likeliest_state = i;
       }
     }
@@ -289,6 +289,7 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
                        ? mRes.window_maxindex
                        : nstates;
   mRes.window_normalization_constant = 0;
+
   for (let i = mRes.window_minindex; i < mRes.window_maxindex; i++) {
     //------------------------------------------------------------- hierarchical
     if (m.parameters.hierarchical) {
@@ -300,29 +301,25 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
         mRes.alpha[i];
     }
   }
+
+  // console.log(mRes.window_minindex + ' '  + mRes.window_maxindex + ' ' + mRes.window_normalization_constant);
 };
 
 
 export const hmmUpdateResults = (m, mRes) => {
-  // IS THIS CORRECT  ? TODO : CHECK AGAIN (seems to have precision issues)
-  // AHA ! : NORMALLY LIKELIHOOD_BUFFER IS CIRCULAR : IS IT THE CASE HERE ?
-  // SHOULD I "POP_FRONT" ? (seems that yes)
-
-  //res.likelihood_buffer.push(Math.log(res.instant_likelihood));
-
-  // NOW THIS IS BETTER (SHOULD WORK AS INTENDED)
-  const bufSize = mRes.likelihood_buffer.length;
+  const bufLength = mRes.likelihood_buffer.length;
   mRes.likelihood_buffer[mRes.likelihood_buffer_index]
     = Math.log(mRes.instant_likelihood);
   // increment circular buffer index
   mRes.likelihood_buffer_index
-    = (mRes.likelihood_buffer_index + 1) % bufSize;
+    = (mRes.likelihood_buffer_index + 1) % bufLength;
 
-  mRes.log_likelihood = 0;
-  for (let i = 0; i < bufSize; i++) {
-    mRes.log_likelihood += mRes.likelihood_buffer[i];
-  }
-  mRes.log_likelihood /= bufSize;
+  mRes.log_likelihood = mRes.likelihood_buffer.reduce((a, b) => a + b, 0);
+  // mRes.log_likelihood = 0;
+  // for (let i = 0; i < bufSize; i++) {
+  //   mRes.log_likelihood += mRes.likelihood_buffer[i];
+  // }
+  mRes.log_likelihood /= bufLength;
 
   mRes.progress = 0;
   for (let i = mRes.window_minindex; i < mRes.window_maxindex; i++) {
@@ -359,6 +356,7 @@ export const hmmFilter = (obsIn, m, mRes) => {
   }
 
   mRes.instant_likelihood = 1.0 / ct;
+
   hmmUpdateAlphaWindow(m, mRes);
   hmmUpdateResults(m, mRes);
 
@@ -442,6 +440,7 @@ export const hhmmForwardInit = (obsIn, hm, hmRes) => {
       }
       mRes.instant_likelihood = mRes.alpha_h[0][0];
     }
+
     norm_const += mRes.instant_likelihood;
   }
 
@@ -485,7 +484,7 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
     }
 
     //------------------------------------------------------------------ ergodic
-    if (m.parameters.transition_mode == 0) { // ergodic
+    if (m.parameters.transition_mode === 0) { // ergodic
       for (let k = 0; k < nstates; k++) {
         for (let j = 0; j < nstates; j++) {
           front[k] += m.transition[j * nstates + k] /
@@ -509,19 +508,19 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
 
       for (let srci = 0; srci < nmodels; srci++) {
         front[0] += hmRes.frontier_v1[srci] *
-              hm.transition[srci][i]
-              + hmRes.frontier_v2[srci] *
-              hm.prior[i];
+                    hm.transition[srci][i] +
+                    hmRes.frontier_v2[srci] *
+                    hm.prior[i];
       }
 
       // k > 0 : rest of the primitive
       for (let k = 1; k < nstates; k++) {
         front[k] += m.transition[k * 2] /
-              (1 - m.exitProbabilities[k]) *
-              mRes.alpha_h[0][k];
+                    (1 - m.exitProbabilities[k]) *
+                    mRes.alpha_h[0][k];
         front[k] += m.transition[(k - 1) * 2 + 1] /
-              (1 - m.exitProbabilities[k - 1]) *
-              mRes.alpha_h[0][k - 1];
+                    (1 - m.exitProbabilities[k - 1]) *
+                    mRes.alpha_h[0][k - 1];
       }
 
       for (let j = 0; j < 3; j++) {
@@ -530,24 +529,23 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
         }
       }
     }
-    //console.log(front);
 
     //========================= update forward variable
     mRes.exit_likelihood = 0;
     mRes.instant_likelihood = 0;
 
+    // end of the primitive : handle exit states
     for (let k = 0; k < nstates; k++) {
       if (hm.shared_parameters.bimodal) {
-        tmp = gmmUtils.gmmObsProbInput(obsIn, m.states[k]) *
-            front[k];
+        tmp = gmmUtils.gmmObsProbInput(obsIn, m.states[k]) * front[k];
       } else {
         tmp = gmmUtils.gmmObsProb(obsIn, m.states[k]) * front[k];
       }
 
       mRes.alpha_h[2][k] = hm.exit_transition[i] *
-                 m.exitProbabilities[k] * tmp;
+                           m.exitProbabilities[k] * tmp;
       mRes.alpha_h[1][k] = (1 - hm.exit_transition[i]) *
-                 m.exitProbabilities[k] * tmp;
+                           m.exitProbabilities[k] * tmp;
       mRes.alpha_h[0][k] = (1 - m.exitProbabilities[k]) * tmp;
 
       mRes.exit_likelihood += mRes.alpha_h[1][k] +
@@ -557,7 +555,15 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
                                  mRes.alpha_h[2][k];
 
       norm_const += tmp;
+
     }
+
+    // this clipping is not in the original code, but prevents cases of -Infinity
+    // in log_likelihoods and NaNs in smoothed_log_likelihoods
+    // (because of all "front" values being null from time to time) ...
+    mRes.instant_likelihood = mRes.instant_likelihood > 1e-180
+                            ? mRes.instant_likelihood
+                            : 1e-180;
 
     mRes.exit_ratio = mRes.exit_likelihood / mRes.instant_likelihood;
   }
@@ -567,6 +573,9 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
     for (let e = 0; e < 3; e++) {
       for (let k = 0; k < hm.models[i].parameters.states; k++) {
         hmRes.singleClassHmmModelResults[i].alpha_h[e][k] /= norm_const;
+        if (norm_const === 0) {
+          console.log(`alpha[${e}][${k}] : ${alpha[e][k]}`);
+        }
       }
     }
   }
@@ -598,9 +607,18 @@ export const hhmmUpdateResults = (hm, hmRes) => {
     }
   }
 
+  if (normconst_instant === 0 || normconst_smoothed === 0) {
+    for (let i = 0; i < hm.models.length; i++) {
+      let mRes = hmRes.singleClassHmmModelResults[i];
+      console.log(mRes.log_likelihood + ' ' + mRes.instant_likelihood);
+    }
+  }
+
+  let totalLikelihood = 0;
   for (let i = 0; i < hm.models.length; i++) {
     hmRes.instant_normalized_likelihoods[i] /= normconst_instant;
     hmRes.smoothed_normalized_likelihoods[i] /= normconst_smoothed;
+    totalLikelihood += hmRes.smoothed_normalized_likelihoods[i];
   }
 };
 
@@ -616,7 +634,8 @@ export const hhmmFilter = (obsIn, hm, hmRes) => {
   //----------------------------------------------------------- non-hierarchical
   } else {
     for (let i = 0; i < hm.models.length; i++) {
-      hmRes.instant_likelihoods[i] = hmmFilter(obsIn, hm, hmRes);
+      hmRes.instant_likelihoods[i]
+        = hmmFilter(obsIn, hm.models[i], hmRes.singleClassHmmModelResults[i]);
     }
   }
 
@@ -631,6 +650,7 @@ export const hhmmFilter = (obsIn, hm, hmRes) => {
       hmRes.singleClassHmmModelResults[i]
     );
   }
+
 
   hhmmUpdateResults(hm, hmRes);
 
