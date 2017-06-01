@@ -83,7 +83,9 @@ class HhmmDecoder {
           likeliestIndex: this._modelResults.likeliest,
           likelihoods: likelihoods,
           timeProgressions: new Array(this._model.models.length),
-          alphas: new Array(this._model.models.length)
+          alphas: new Array(this._model.models.length),
+          outputValues: [],
+          outputCovariance: [],
         };
 
         for (let i = 0; i < this._model.models.length; i++) {

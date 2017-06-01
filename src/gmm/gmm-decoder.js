@@ -79,7 +79,9 @@ class GmmDecoder {
         res = {
           likeliest: likeliest,
           likeliestIndex: this._modelResults.likeliest,
-          likelihoods: likelihoods
+          likelihoods: likelihoods,
+          outputValues: [],
+          outputCovariance: [],
         };
 
         // add regression results to global results if bimodal :
