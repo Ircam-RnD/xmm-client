@@ -4,6 +4,23 @@ import fs from 'fs';
 import path from 'path';
 import test from 'tape';
 
+// we can't do this locally (todo : solve xhr client / node problem) ...
+
+// test('train', (t) => {
+//   xmm.train({
+//     configuration: {
+//       modelType : 'gmm'
+//     },
+//     dataset : {
+
+//     }
+//   }, function(code, res) {
+//     console.log(code + ' ' + res);
+//   });
+
+//   t.end();
+// });
+
 test('basic', (t) => {
   const pm = new xmm.PhraseMaker();
   const hhmm = new xmm.HhmmDecoder();
