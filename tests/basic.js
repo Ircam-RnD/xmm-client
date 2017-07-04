@@ -8,11 +8,19 @@ import test from 'tape';
 
 // test('train', (t) => {
 //   xmm.train({
-//     configuration: {
+//     configuration:
+//     {
 //       modelType : 'gmm'
 //     },
-//     dataset : {
-
+//     dataset :
+//     {
+//       "bimodal": false,
+//       "column_names": [
+//         ""
+//       ],
+//       "dimension": 1,
+//       "dimension_input": 0,
+//       "phrases": []
 //     }
 //   }, function(code, res) {
 //     console.log(code + ' ' + res);

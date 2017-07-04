@@ -137,7 +137,7 @@ class SetMaker {
    * @param {String} label - The label of the phrases to remove.
    */
   removePhrasesOfLabel(label) {
-    for (let i = 0; i < this._phrases.length; i++) {
+    for (let i = this._phrases.length - 1; i >= 0; i--) {
       if (this._phrases[i]['label'] === label) {
         this.phrases.splice(i, 1);
       }

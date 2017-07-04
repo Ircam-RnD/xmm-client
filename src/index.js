@@ -13,17 +13,41 @@ export { default as HhmmDecoder } from './hhmm/hhmm-decoder';
 export { default as PhraseMaker } from './set/xmm-phrase';
 export { default as SetMaker } from './set/xmm-set';
 
+/**
+ * @typedef xmmTrainingData
+ */
+
+/**
+ * @typedef xmmModelConfig
+ */
+
+
+/**
+ * Sends a post request to https://como.ircam.fr/api/v1/train
+ * @param {xmmTrainingData} data - must contain thress fields : configuration, modelType and dataset.
+ * The dataset should have been created with PhraseMaker and Setmaker classes.
+ */
 const train = (data, callback) => {
-  const url = 'https://como.ircam.fr/api/v1/train';
+  const url = data['url'] ? data['url'] : 'https://como.ircam.fr/api/v1/train';
   const xhr = new XMLHttpRequest();
   xhr.open('post', url, true);
+  xhr.responseType = 'json';
   xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
   xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4) {
-      callback(xhr.status, xhr.responseText);
-    }
-  };
+
+  //   xhr.onreadystate = function() {
+  //     if (xhr.readyState === 4) {
+  //       callback(xhr.status, xhr.responseText);
+  //     }
+  //   }
+
+  xhr.onload = function() {
+    callback(xhr.status, xhr.response);
+  }
+  xhr.onerror = function() {
+    callback(xhr.status, xhr.response);
+  }
+
   xhr.send(JSON.stringify(data));
 };
 
