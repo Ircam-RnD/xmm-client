@@ -139,7 +139,7 @@ class SetMaker {
   removePhrasesOfLabel(label) {
     for (let i = this._phrases.length - 1; i >= 0; i--) {
       if (this._phrases[i]['label'] === label) {
-        this.phrases.splice(i, 1);
+        this._phrases.splice(i, 1);
       }
     }
   }
