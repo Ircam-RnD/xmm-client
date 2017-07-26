@@ -2,6 +2,7 @@ import * as xmm from '../src/index';
 import xmmNode from 'xmm-node';
 import fs from 'fs';
 import test from 'tape';
+import { diff as deepDiff } from 'deep-diff';
 import filePaths from './utils/trainingset-files';
 
 // we can't do this locally (todo : solve xhr client / node problem) ...
@@ -55,7 +56,6 @@ test('basic', (t) => {
 //======================== UTILITIES FOR THE NEXT TESTS ======================//
 
 const testModel = (t, err, res, decoder, set) => {
-  t.equal(err, null);
   decoder.setModel(res);
 
   let totalObservations = 0;
@@ -96,7 +96,7 @@ test('hhmm', (t) => {
     states: 5
   });
 
-  t.plan(2 * filePaths.length);
+  t.plan(filePaths.length);
 
   for (let i = 0; i < filePaths.length; i++) {
     const set = JSON.parse(fs.readFileSync(filePaths[i], 'utf-8'));
@@ -117,7 +117,7 @@ test('gmm', (t) => {
     absoluteRegularization: 0.001
   });
 
-  t.plan(2 * filePaths.length);
+  t.plan(filePaths.length);
 
   for (let i = 0; i < filePaths.length; i++) {
     const set = JSON.parse(fs.readFileSync(filePaths[i], 'utf-8'));
@@ -128,6 +128,34 @@ test('gmm', (t) => {
     });
   }
 });
+
+
+
+const epsilon = 1e-7;
+
+const myDeepEqual = function(obj1, obj2) {
+  let sum = 0;
+  let cnt = 0;
+
+  const differences = deepDiff(obj1, obj2);
+  // console.log(JSON.stringify(differences, null, 2));
+
+  for (let d of differences) {
+    if (d.kind !== 'E' || d.path[0] !== 'phrases' || d.path[2] !== 'data') {
+      return false;
+    }
+
+    const diff = d.lhs - d.rhs;
+    sum += diff * diff;
+    cnt++;
+  }
+
+  const rmse = Math.sqrt(sum / cnt);
+  console.log(`epsilon : ${epsilon}`);
+  console.log(`RMSE : ${rmse}`);
+
+  return rmse < epsilon;
+};
 
 test('trainingset', (t) => {
   const labels = ['a', 'b', 'c'];
@@ -153,9 +181,16 @@ test('trainingset', (t) => {
     pm.reset();
   }
 
-  // this doesn't pass due to rounding errors (JS uses doubles and XMM floats)
-  // TODO : write RMSE function for comparison of data in training sets
-  // t.deepEqual(sm.getTrainingSet(), myXmm.getTrainingSet(), "aha");
+  // myXmm.setTrainingSet(myXmm.getTrainingSet());
+  // sm.clear();
+  // sm.addTrainingSet(myXmm.getTrainingSet());
+
+  const trainingSetsMsg = 'training sets created by node and client should only differ from small rounding errors in data';
+  t.equal(
+    myDeepEqual(sm.getTrainingSet(), myXmm.getTrainingSet()),
+    true,
+    trainingSetsMsg
+  );
   t.end();
 });
 

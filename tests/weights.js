@@ -93,10 +93,10 @@ test('weights', (t) => {
     
     // console.log('total : ' + total);
     console.log('warning :');
-    console.log('this test passes because of a particular configuration combined with a particular training set');
+    console.log('this test passes because of a particular model configuration combined with a particular training set');
     console.log('there are usually some errors that would make this test fail');
 
-    t.equal(diffCnt, 0, "all likeliests should be the same")
+    t.equal(diffCnt, 0, "all likeliest labels should be the same")
   };
 
   t.end();
