@@ -1,8 +1,8 @@
 import * as xmm from '../src/index';
 import xmmNode from 'xmm-node';
 import fs from 'fs';
-import path from 'path';
 import test from 'tape';
+import filePaths from './utils/trainingset-files';
 
 // we can't do this locally (todo : solve xhr client / node problem) ...
 
@@ -53,17 +53,6 @@ test('basic', (t) => {
 });
 
 //======================== UTILITIES FOR THE NEXT TESTS ======================//
-
-const folderPath = './tests/data/trainingsets';
-const filePaths = fs.readdirSync(folderPath);
-
-for (let i = filePaths.length - 1; i >= 0; i--) {
-  if (filePaths[i].split('.').pop() !== 'json') {
-    filePaths.splice(i, 1);
-  } else {
-    filePaths[i] = `${folderPath}/${filePaths[i]}`;
-  }
-}
 
 const testModel = (t, err, res, decoder, set) => {
   t.equal(err, null);
@@ -121,8 +110,6 @@ test('hhmm', (t) => {
 
 test('gmm', (t) => {
   const gmm = new xmm.GmmDecoder();
-  // gmm.setWeights([1, 1, 1, 0.6, 0.6, 0.6]);
-  // gmm.setWeights([1.9, 1.9, 1.9, 1, 1, 1]);
 
   const gmmModel = new xmmNode('gmm', {
     gaussians: 5,

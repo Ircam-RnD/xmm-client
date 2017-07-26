@@ -1,8 +1,10 @@
 import * as xmm from '../src/index';
 import xmmNode from 'xmm-node';
 import fs from 'fs';
-import path from 'path';
 import test from 'tape';
+
+// WARNING :
+// THIS TEST PASSES DUE TO MODEL TRAINING CONFIG, BUT THIS IS RARELY THE CASE
 
 test('weights', (t) => {
   const setAccelGyro = JSON.parse(
