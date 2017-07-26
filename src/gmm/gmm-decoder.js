@@ -171,7 +171,9 @@ class GmmDecoder {
     const w = this._weights.slice();
 
     if (w.length < dimIn) {
-      for (let i = 0; i < dimIn - w.length; i++) {
+      const onesToAdd = dimIn - w.length;
+
+      for (let i = 0; i < onesToAdd; i++) {
         w.push(1);
       }
     } else if (w.length > dimIn) {

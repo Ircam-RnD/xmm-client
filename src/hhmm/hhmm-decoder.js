@@ -34,6 +34,8 @@ class HhmmDecoder {
      * @private
      */
     this._modelResults = undefined;
+
+    this._weights = [];
   }
 
   /**
@@ -191,7 +193,9 @@ class HhmmDecoder {
     const w = this._weights.slice();
 
     if (w.length < dimIn) {
-      for (let i = 0; i < dimIn - w.length; i++) {
+      const onesToAdd = dimIn - w.length;
+
+      for (let i = 0; i < onesToAdd; i++) {
         w.push(1);
       }
     } else if (w.length > dimIn) {
@@ -284,7 +288,7 @@ class HhmmDecoder {
       const params = m.shared_parameters;
       const dimOut = params.dimension - params.dimension_input;
       this._modelResults.output_values = new Array(dimOut);
-      
+
       for (let i = 0; i < dimOut; i++) {
         this._modelResults.output_values[i] = 0.0;
       }
