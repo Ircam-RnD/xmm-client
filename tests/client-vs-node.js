@@ -5,7 +5,7 @@ import test from 'tape';
 import filePaths from './utils/trainingset-files';
 
 // for RMSE computation
-const epsilon = 10e-9;
+const epsilon = 1e-9;
 
 const compare = (t, err, res, clientDecoder, nativeDecoder, set) => {
   clientDecoder.setModel(res);
@@ -40,7 +40,8 @@ const compare = (t, err, res, clientDecoder, nativeDecoder, set) => {
   const rmse = Math.sqrt(sum / totalObservations);
   // console.log('RMSE : ' + rmse);
 
-  t.equal(rmse < epsilon, true, 'compared likelihoods should have a low RMSE');
+  const compareMsg = `compared likelihoods should have a low RMSE (epsilon = ${epsilon})`;
+  t.equal(rmse < epsilon, true, compareMsg);
 };
 
 
