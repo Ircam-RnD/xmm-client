@@ -181,6 +181,7 @@ test('trainingset', (t) => {
     pm.reset();
   }
 
+  // THIS CRASHES !!! => write more tests !!!
   // myXmm.setTrainingSet(myXmm.getTrainingSet());
   // sm.clear();
   // sm.addTrainingSet(myXmm.getTrainingSet());
