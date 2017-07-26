@@ -43,24 +43,6 @@ class PhraseMaker {
     this.reset();
   }
 
-  /***
-   * XMM phrase configuration object.
-   * Only legal fields will be checked before being added to the config, others will be ignored
-   * @type {XmmPhraseConfig}
-   * @deprecated since version 0.2.0
-   */
-  // get config() {
-  //   return this._config;
-  // }
-
-  // set config(options = {}) {
-  //   this._setConfig(options);
-  // }
-
-  // new API (b-ma tip : don' use accessors if there is some magic behind,
-  // which is the case in _setConfig)
-  // keeping accessors for backwards compatibility
-
   /**
    * Returns the current configuration.
    * @returns {xmmPhraseConfig}
@@ -164,15 +146,6 @@ class PhraseMaker {
    * </li>
    */
 
-  /***
-   * A valid XMM phrase, ready to be processed by the XMM library.
-   * @readonly
-   * @type {xmmPhrase}
-   */
-  // get phrase() {
-  //   return this._getPhrase();
-  // }
-
   /**
    * Returns a valid XMM phrase created from the config and the recorded data.
    * @returns {xmmPhrase}
@@ -183,19 +156,25 @@ class PhraseMaker {
 
   /** @private */
   _getPhrase() {
-    return {
+    let res = {
       bimodal: this._config.bimodal,
       column_names: this._config.columnNames,
       dimension: this._config.dimension,
       dimension_input: this._config.dimensionInput,
       label: this._config.label,
-      data: this._data.slice(0),
-      data_input: this._dataIn.slice(0),
-      data_output: this._dataOut.slice(0),
       length: this._config.bimodal
             ? this._dataIn.length / this._config.dimensionInput
-            : this._data.length / this._config.dimension
+            : this._data.length / this._config.dimension      
     };
+
+    if (this._config.bimodal) {
+      res.data_input = this._dataIn.slice(0);
+      res.data_output = this._dataOut.slice(0);
+    } else {
+      res.data = this._data.slice(0);
+    }
+
+    return res;    
   }
 
   /**

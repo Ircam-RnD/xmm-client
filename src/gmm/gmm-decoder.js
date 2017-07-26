@@ -34,6 +34,8 @@ class GmmDecoder {
      * @private
      */
     this._likelihoodWindow = windowSize;
+
+    this._weights = [];
   }
 
   /**
@@ -149,6 +151,45 @@ class GmmDecoder {
     }    
   }
 
+  setWeights(newWeights) {
+    if (typeof(newWeights) !== 'array') {
+      throw new Error('Weights must be an array');
+    }
+
+    this._weights = newWeights;
+    this._updateWeights();
+  }
+
+  /** @private */
+  _updateWeights() {
+    if (this._model === undefined) return;
+
+    const m = this._model;
+    const params = m.shared_parameters;
+    const dimIn = params.bimodal ? params.dimension_input : params.dimension;
+
+    const w = this._weights.slice();
+
+    if (w.length < dimIn) {
+      for (let i = 0; i < dimIn - w.length; i++) {
+        w.push(1);
+      }
+    } else if (w.length > dimIn) {
+      w.splice(dimIn - 1);
+    }
+
+    for (let i = 0; i < w.length; i++) {
+      w[i] = Math.max(w[i], 0);
+    }
+
+    for (let i = 0; i < m.models.length; i++) {
+      for (let j = 0; j < m.models[i].components.length; j++) {
+        m.models[i].components[j].weights = w;
+      }
+    }
+  }
+
+
   /**
    * A valid XMM GMM model
    * @typedef xmmGmmModel
@@ -191,7 +232,6 @@ class GmmDecoder {
 
   /** @private */
   _setModel(model) {
-    
     this._model = undefined;
     this._modelResults = undefined;
 
@@ -200,6 +240,10 @@ class GmmDecoder {
     // test if model is valid here (TODO : write a better test)
     if (model.models !== undefined) {
       this._model = model;
+
+      // adds user defined weights to the model (default [1, 1, ..., 1])
+      this._updateWeights();
+
       const m = this._model;
       const nmodels = m.models.length;
 
@@ -239,7 +283,6 @@ class GmmDecoder {
 
 
       for(let i = 0; i < nmodels; i++) {
-
         this._modelResults.instant_likelihoods[i] = 0;
         this._modelResults.smoothed_log_likelihoods[i] = 0;
         this._modelResults.smoothed_likelihoods[i] = 0;

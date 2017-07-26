@@ -171,6 +171,46 @@ class HhmmDecoder {
     }    
   }
 
+  setWeights(newWeights) {
+    if (typeof(newWeights) !== 'array') {
+      throw new Error('Weights must be an array');
+    }
+
+    this._weights = newWeights;
+    this._updateWeights();
+  }
+
+  /** @private */
+  _updateWeights() {
+    if (this._model === undefined) return;
+
+    const m = this._model;
+    const params = m.shared_parameters;
+    const dimIn = params.bimodal ? params.dimension_input : params.dimension;
+
+    const w = this._weights.slice();
+
+    if (w.length < dimIn) {
+      for (let i = 0; i < dimIn - w.length; i++) {
+        w.push(1);
+      }
+    } else if (w.length > dimIn) {
+      w.splice(dimIn - 1);
+    }
+
+    for (let i = 0; i < w.length; i++) {
+      w[i] = Math.max(w[i], 0);
+    }
+
+    for (let i = 0; i < m.models.length; i++) {
+      for (let j = 0; j < m.models[i].states.length; j++) {
+        for (let k = 0; k < m.models[i].states[j].components.length; k++) {
+          m.models[i].states[j].components[k].weights = w;
+        }
+      }
+    }
+  }
+
   /**
    * A valid XMM Hierarchical HMM model
    * @typedef xmmHhmmModel
@@ -213,7 +253,6 @@ class HhmmDecoder {
 
   /** @private */
   _setModel(model) {      
-
     this._model = undefined;
     this._modelResults = undefined;
 
@@ -222,6 +261,10 @@ class HhmmDecoder {
     // test if model is valid here (TODO : write a better test)
     if (model.models !== undefined) {
       this._model = model;
+
+      // adds user defined weights to the model (default [1, 1, ..., 1])
+      this._updateWeights();
+
       const m = this._model;
       const nmodels = m.models.length;
 
@@ -241,6 +284,7 @@ class HhmmDecoder {
       const params = m.shared_parameters;
       const dimOut = params.dimension - params.dimension_input;
       this._modelResults.output_values = new Array(dimOut);
+      
       for (let i = 0; i < dimOut; i++) {
         this._modelResults.output_values[i] = 0.0;
       }
