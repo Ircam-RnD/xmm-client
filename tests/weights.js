@@ -13,7 +13,7 @@ test('weights', (t) => {
 
   const setAccel = JSON.parse(JSON.stringify(setAccelGyro));
 
-  // remove all data from dim 4 to dim 6 in set copy
+  // remove all data from dim 4 to dim 6 in copy of original set :
   setAccel.dimension = 3;
   setAccel.column_names.splice(3, 3);
 
@@ -90,7 +90,11 @@ test('weights', (t) => {
         total++;
       }
     }
-    console.log('total : ' + total);
+    
+    // console.log('total : ' + total);
+    console.log('warning :');
+    console.log('this test passes because of a particular configuration combined with a particular training set');
+    console.log('there are usually some errors that would make this test fail');
 
     t.equal(diffCnt, 0, "all likeliests should be the same")
   };
