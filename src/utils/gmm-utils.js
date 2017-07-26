@@ -56,7 +56,8 @@ export const gmmComponentLikelihood = (obsIn, c) => {
       let tmp = 0.0;
       for (let k = 0; k < c.dimension; k++) {
         tmp += c.inverse_covariance[l * c.dimension + k] *
-               (obsIn[k] - c.mean[k]);
+               (obsIn[k] - c.mean[k]) *
+               c.weights[k];
       }
       euclidianDistance += (obsIn[l] - c.mean[l]) * tmp * c.weights[l];
     }
@@ -66,7 +67,7 @@ export const gmmComponentLikelihood = (obsIn, c) => {
       euclidianDistance += c.inverse_covariance[l] *
                            (obsIn[l] - c.mean[l]) *
                            (obsIn[l] - c.mean[l]) *
-                           c.weights[l];
+                           c.weights[l] * c.weights[l];
     }
   }
 
@@ -96,7 +97,8 @@ export const gmmComponentLikelihoodInput = (obsIn, c) => {
       let tmp = 0.0;
       for (let k = 0; k < c.dimension_input; k++) {
         tmp += c.inverse_covariance_input[l * c.dimension_input + k] *
-               (obsIn[k] - c.mean[k]);
+               (obsIn[k] - c.mean[k]) *
+               c.weights[k];
       }
       euclidianDistance += (obsIn[l] - c.mean[l]) * tmp * c.weights[l];
     }
@@ -109,7 +111,7 @@ export const gmmComponentLikelihoodInput = (obsIn, c) => {
       euclidianDistance += c.inverse_covariance_input[l] *
                            (obsIn[l] - c.mean[l]) *
                            (obsIn[l] - c.mean[l]) *
-                           c.weights[l];
+                           c.weights[l] * c.weights[l];
     }
   }
 
@@ -139,9 +141,10 @@ export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, c) => {
   if (c.covariance_mode === 0) {
     for (let l = 0; l < dim; l++) {
       let tmp = 0.0;
-      for (let k = 0; k < c.dimension_input; k++) {
+      for (let k = 0; k < dimIn; k++) {
         tmp += c.inverse_covariance[l * dim + k] *
-               (obsIn[k] - c.mean[k]);
+               (obsIn[k] - c.mean[k]) *
+               c.weights[k];
       }
       for (let k = 0; k < dimOut; k++) {
         tmp += c.inverse_covariance[l * dim + dimIn + k] *
@@ -159,9 +162,9 @@ export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, c) => {
       euclidianDistance += c.inverse_covariance[l] *
                  (obsIn[l] - c.mean[l]) *
                  (obsIn[l] - c.mean[l]) *
-                 c.weights[l];
+                 c.weights[l] * c.weights[l];
     }
-    for (let l = c.dimension_input; l < c.dimension; l++) {
+    for (let l = dimIn; l < dim; l++) {
       let sq = (obsOut[l - dimIn] - c.mean[l]) *
                (obsOut[l - dimIn] - c.mean[l]);
       euclidianDistance += c.inverse_covariance[l] * sq;

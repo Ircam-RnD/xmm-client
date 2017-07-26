@@ -152,7 +152,7 @@ class GmmDecoder {
   }
 
   setWeights(newWeights) {
-    if (typeof(newWeights) !== 'array') {
+    if (!Array.isArray(newWeights)) {
       throw new Error('Weights must be an array');
     }
 

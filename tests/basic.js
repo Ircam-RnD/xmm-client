@@ -74,7 +74,7 @@ const testModel = (t, err, res, decoder, set) => {
   
   for (let i = 0; i < set.phrases.length; i++) {
     const p = set.phrases[i];
-    const dim = p['dimension'] - p['dimension_input'];
+    const dim = p['bimodal'] ? p['dimension_input'] : p['dimension'];
     const step = p['dimension'];
   
     for (let j = 0; j < p['length']; j++) {
@@ -92,7 +92,7 @@ const testModel = (t, err, res, decoder, set) => {
 
   const classifyMsg
     = 'phrases from training set should be classified perfectly by the decoder';
-  t.equal(totalObservations, positives, classifyMsg);
+  t.equal(positives, totalObservations, classifyMsg);
 };
 
 //======== NEXT TESTS :
@@ -121,6 +121,8 @@ test('hhmm', (t) => {
 
 test('gmm', (t) => {
   const gmm = new xmm.GmmDecoder();
+  // gmm.setWeights([1, 1, 1, 0.6, 0.6, 0.6]);
+  // gmm.setWeights([1.9, 1.9, 1.9, 1, 1, 1]);
 
   const gmmModel = new xmmNode('gmm', {
     gaussians: 5,
@@ -149,7 +151,7 @@ test('trainingset', (t) => {
   const sm = new xmm.SetMaker();
   const myXmm = new xmmNode('boubou');
 
-  console.log('phrase config : ' + JSON.stringify(pm.getConfig()));
+  // console.log('phrase config : ' + JSON.stringify(pm.getConfig()));
 
   for (let p = 0; p < labels.length; p++) {
     pm.setConfig({ label: labels[p] });
