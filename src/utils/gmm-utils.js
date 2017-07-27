@@ -55,17 +55,19 @@ export const gmmComponentLikelihood = (obsIn, c) => {
     for (let l = 0; l < c.dimension; l++) {
       let tmp = 0.0;
       for (let k = 0; k < c.dimension; k++) {
-        tmp += c.inverse_covariance[l * c.dimension + k]
-          * (obsIn[k] - c.mean[k]);
+        tmp += c.inverse_covariance[l * c.dimension + k] *
+               (obsIn[k] - c.mean[k]) *
+               c.weights[k];
       }
-      euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
+      euclidianDistance += (obsIn[l] - c.mean[l]) * tmp * c.weights[l];
     }
   //------------------------------------------------------------------- diagonal
   } else {
     for (let l = 0; l < c.dimension; l++) {
       euclidianDistance += c.inverse_covariance[l] *
-                 (obsIn[l] - c.mean[l]) *
-                 (obsIn[l] - c.mean[l]);
+                           (obsIn[l] - c.mean[l]) *
+                           (obsIn[l] - c.mean[l]) *
+                           c.weights[l] * c.weights[l];
     }
   }
 
@@ -95,9 +97,10 @@ export const gmmComponentLikelihoodInput = (obsIn, c) => {
       let tmp = 0.0;
       for (let k = 0; k < c.dimension_input; k++) {
         tmp += c.inverse_covariance_input[l * c.dimension_input + k] *
-             (obsIn[k] - c.mean[k]);
+               (obsIn[k] - c.mean[k]) *
+               c.weights[k];
       }
-      euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
+      euclidianDistance += (obsIn[l] - c.mean[l]) * tmp * c.weights[l];
     }
   //------------------------------------------------------------------- diagonal
   } else {
@@ -106,8 +109,9 @@ export const gmmComponentLikelihoodInput = (obsIn, c) => {
       // sounds logic ... but, according to Jules (cf e-mail),
       // not really important.
       euclidianDistance += c.inverse_covariance_input[l] *
-                 (obsIn[l] - c.mean[l]) *
-                 (obsIn[l] - c.mean[l]);
+                           (obsIn[l] - c.mean[l]) *
+                           (obsIn[l] - c.mean[l]) *
+                           c.weights[l] * c.weights[l];
     }
   }
 
@@ -137,19 +141,19 @@ export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, c) => {
   if (c.covariance_mode === 0) {
     for (let l = 0; l < dim; l++) {
       let tmp = 0.0;
-      for (let k = 0; k < c.dimension_input; k++) {
+      for (let k = 0; k < dimIn; k++) {
         tmp += c.inverse_covariance[l * dim + k] *
-             (obsIn[k] - c.mean[k]);
+               (obsIn[k] - c.mean[k]) *
+               c.weights[k];
       }
-      for (let k =  0; k < dimOut; k++) {
+      for (let k = 0; k < dimOut; k++) {
         tmp += c.inverse_covariance[l * dim + dimIn + k] *
-             (obsOut[k] - c.mean[dimIn +k]);
+               (obsOut[k] - c.mean[dimIn +k]);
       }
       if (l < dimIn) {
-        euclidianDistance += (obsIn[l] - c.mean[l]) * tmp;
+        euclidianDistance += (obsIn[l] - c.mean[l]) * tmp * c.weights[l];
       } else {
-        euclidianDistance += (obsOut[l - dimIn] - c.mean[l]) *
-                   tmp;
+        euclidianDistance += (obsOut[l - dimIn] - c.mean[l]) * tmp;
       }
     }
   //------------------------------------------------------------------- diagonal
@@ -157,11 +161,12 @@ export const gmmComponentLikelihoodBimodal = (obsIn, obsOut, c) => {
     for (let l = 0; l < dimIn; l++) {
       euclidianDistance += c.inverse_covariance[l] *
                  (obsIn[l] - c.mean[l]) *
-                 (obsIn[l] - c.mean[l]);
+                 (obsIn[l] - c.mean[l]) *
+                 c.weights[l] * c.weights[l];
     }
-    for (let l = c.dimension_input; l < c.dimension; l++) {
+    for (let l = dimIn; l < dim; l++) {
       let sq = (obsOut[l - dimIn] - c.mean[l]) *
-           (obsOut[l - dimIn] - c.mean[l]);
+               (obsOut[l - dimIn] - c.mean[l]);
       euclidianDistance += c.inverse_covariance[l] * sq;
     }
   }

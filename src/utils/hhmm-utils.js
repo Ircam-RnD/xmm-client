@@ -44,7 +44,7 @@ export const hmmRegression = (obsIn, m, mRes) => {
       mRes.singleClassGmmModelResults[mRes.likeliest_state]
     );
     mRes.output_values
-      = m.states[mRes.likeliest_state].output_values.slice(0);
+      = m.states[mRes.likeliest_state].output_values.slice();
     return;
   }
 
