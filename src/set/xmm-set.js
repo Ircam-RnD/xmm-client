@@ -91,7 +91,7 @@ class SetMaker {
   getPhrase(index) {
     if (index > -1 && index < this._phrases.length) {
       // return a new copy of the phrase :
-      return JSON.parse(JSON.srtingify(this._phrases[index]));
+      return JSON.parse(JSON.stringify(this._phrases[index]));
     }
     return null;
   }

@@ -6,7 +6,9 @@
  * See https://github.com/Ircam-RnD/xmm for detailed XMM credits.
  */
 
-// import { XMLHttpRequest } from 'xmlhttprequest';
+const isNode = new Function("try {return this===global;}catch(e){return false;}");
+
+import { XMLHttpRequest as XHR } from 'xmlhttprequest';
 
 export { default as GmmDecoder } from './gmm/gmm-decoder';
 export { default as HhmmDecoder } from './hhmm/hhmm-decoder';
@@ -21,7 +23,6 @@ export { default as SetMaker } from './set/xmm-set';
  * @typedef xmmModelConfig
  */
 
-
 /**
  * Sends a post request to https://como.ircam.fr/api/v1/train
  * @param {xmmTrainingData} data - must contain thress fields : configuration, modelType and dataset.
@@ -29,23 +30,26 @@ export { default as SetMaker } from './set/xmm-set';
  */
 const train = (data, callback) => {
   const url = data['url'] ? data['url'] : 'https://como.ircam.fr/api/v1/train';
-  const xhr = new XMLHttpRequest();
+  const xhr = isNode() ? new XHR() : new XMLHttpRequest();
+
   xhr.open('post', url, true);
   xhr.responseType = 'json';
   xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
   xhr.setRequestHeader('Content-Type', 'application/json');
 
-  //   xhr.onreadystate = function() {
-  //     if (xhr.readyState === 4) {
-  //       callback(xhr.status, xhr.responseText);
-  //     }
-  //   }
-
-  xhr.onload = function() {
-    callback(xhr.status, xhr.response);
-  }
-  xhr.onerror = function() {
-    callback(xhr.status, xhr.response);
+  if (isNode()) { // XMLHttpRequest module only supports xhr v1
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        callback(xhr.status, xhr.responseText);
+      }
+    }
+  } else { // use xhr v2
+    xhr.onload = function() {
+      callback(xhr.status, xhr.response);
+    }
+    xhr.onerror = function() {
+      callback(xhr.status, xhr.response);
+    }
   }
 
   xhr.send(JSON.stringify(data));
