@@ -1,9 +1,6 @@
 import * as xmm from '../src/index';
 import test from 'tape';
 
-// WARNING :
-// THIS TEST PASSES DUE TO MODEL TRAINING CONFIG, BUT THIS IS RARELY THE CASE
-
 test('universal', (t) => {
   t.plan(2);
 
