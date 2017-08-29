@@ -8,7 +8,7 @@ import test from 'tape';
 
 test('weights', (t) => {
   const setAccelGyro = JSON.parse(
-    fs.readFileSync('./tests/data/trainingsets/3gestures-unimodal-dim6.json')
+    fs.readFileSync('./test/data/trainingsets/3gestures-unimodal-dim6.json')
   );
 
   const setAccel = JSON.parse(JSON.stringify(setAccelGyro));
