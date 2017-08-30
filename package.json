@@ -18,8 +18,7 @@
     "test": "babel-tape-runner \"test/*_tests.js\" | tap-spec"
   },
   "dependencies": {
-    "babel-runtime": "^6.25.0",
-    "xmlhttprequest": "^1.8.0"
+    "babel-runtime": "^6.25.0"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
