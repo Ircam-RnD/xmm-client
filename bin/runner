@@ -20,16 +20,6 @@ var babelOptions = {
 };
 
 /**
- * Options for watch.
- */
-var watchOptions = {
-  ignoreDotFiles: true,
-  ignoreUnreadableDir: true,
-  ignoreNotPermitted: true,
-  interval: 2000, // watch internally use `fs.watchFile`
-};
-
-/**
  * Options for browserify.
  */
 var browserifyOptions = {
@@ -95,31 +85,6 @@ function _getFileList(folder, callback) {
     });
 }
 
-/**
- * Watch javascript source files.
- */
-function watchFiles(srcDirectory, distDirectory) {
-  watch.createMonitor(srcDirectory, watchOptions, function(monitor) {
-    var transpiler = javascripts.getTranspiler(srcDirectory, distDirectory, isAllowed, babelOptions);
-
-    monitor.on('created', function(filename, stats) {
-      if (isAllowed(filename))
-        transpiler.transpile(filename, []);
-    });
-
-    monitor.on('changed', function(filename, stats) {
-      if (isAllowed(filename))
-        transpiler.transpile(filename, []);
-    });
-
-    monitor.on('removed', function(filename, stats) {
-      if (isAllowed(filename, false))
-        transpiler.delete(filename);
-    });
-  });
-}
-
-
 function transpileFiles(srcDirectory, distDirectory, callback) {
   _getFileList(srcDirectory, function(files) {
     var transpiler = javascripts.getTranspiler(srcDirectory, distDirectory, isAllowed, babelOptions);
@@ -151,13 +116,6 @@ for (var i = 0; i < args.length; i += 2) {
 }
 
 switch (command) {
-  /**
-   * Watch the file system and transpile from es6 to es5.
-   */
-  case '--watch':
-    watchFiles(srcDirectory, distDirectory);
-    break;
-
   /**
    * Transpile all files in `src` from es6 to es5.
    */
