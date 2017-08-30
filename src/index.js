@@ -24,9 +24,16 @@ export { default as SetMaker } from './set/xmm-set';
  */
 
 /**
- * Sends a post request to https://como.ircam.fr/api/v1/train
- * @param {xmmTrainingData} data - must contain thress fields : configuration, modelType and dataset.
- * The dataset should have been created with PhraseMaker and Setmaker classes.
+ * Callback returning a trained model.
+ * @callback
+
+/**
+ * Send a POST request to CoMo RESTful API and receive a trained model.
+ * @param {Object} trainingData - Data needed by the API to train the model.
+ * @param {String} [trainingData.url=https://como.ircam.fr/api/v1/train] - The API's url.
+ * @param {Object} trainingData.configuration - The training configuration parameters.
+ * @param {Object} trainingData.trainingSet - The examples used to train the model.
+ * @param {}
  */
 const train = (data, callback) => {
   const url = data['url'] ? data['url'] : 'https://como.ircam.fr/api/v1/train';
@@ -55,46 +62,4 @@ const train = (data, callback) => {
   xhr.send(JSON.stringify(data));
 };
 
-/* * * * * * * * * * * * * * RAPID-MIX TRANSLATORS * * * * * * * * * * * * * */
-
-////////// XMM => RAPID-MIX
-
-const xmmToRapidMixTrainingSet = xmmSet => {
-  // TODO
-  return null;
-}
-
-////////// RAPID-MIX => XMM
-
-const rapidMixToXmmTrainingSet = rmSet => {
-  const s = rmSet.payload;
-
-  const pm = new Xmm.PhraseMaker({
-    bimodal: s.outputDimension > 0,
-    dimension: s.inputDimension + s.outputDimension,
-    dimensionInput: s.inputDimension,
-  });
-  const sm = new Xmm.SetMaker();
-
-  for (let i in s.data) {
-    pm.reset();
-    pm.setConfig({ label: s.data[i].label });
-
-    for (let j in s.data[i].inputData) {
-      let v = s.data[i].inputData[j];
-
-      if (s.outputDimension > 0) {
-        v = v.concat(s.data[i].outputData[j]);
-      }
-
-      pm.addObservation(v);
-    }
-
-    sm.addPhrase(pm.getPhrase());
-  }
-
-  return sm.getTrainingSet();
-}
-
-
-export { train, xmmToRapidMixTrainingSet, rapidMixToXmmTrrainingSet };
+export { train };
