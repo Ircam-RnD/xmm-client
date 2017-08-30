@@ -1,4 +1,4 @@
-/**
+/*
  * This library is developed by the ISMM (http://ismm.ircam.fr/) team at IRCAM,
  * within the context of the RAPID-MIX (http://rapidmix.goldsmithsdigital.com/)
  * project, funded by the European Union’s Horizon 2020 research and innovation programme.  
@@ -55,4 +55,46 @@ const train = (data, callback) => {
   xhr.send(JSON.stringify(data));
 };
 
-export { train };
+/* * * * * * * * * * * * * * RAPID-MIX TRANSLATORS * * * * * * * * * * * * * */
+
+////////// XMM => RAPID-MIX
+
+const xmmToRapidMixTrainingSet = xmmSet => {
+  // TODO
+  return null;
+}
+
+////////// RAPID-MIX => XMM
+
+const rapidMixToXmmTrainingSet = rmSet => {
+  const s = rmSet.payload;
+
+  const pm = new Xmm.PhraseMaker({
+    bimodal: s.outputDimension > 0,
+    dimension: s.inputDimension + s.outputDimension,
+    dimensionInput: s.inputDimension,
+  });
+  const sm = new Xmm.SetMaker();
+
+  for (let i in s.data) {
+    pm.reset();
+    pm.setConfig({ label: s.data[i].label });
+
+    for (let j in s.data[i].inputData) {
+      let v = s.data[i].inputData[j];
+
+      if (s.outputDimension > 0) {
+        v = v.concat(s.data[i].outputData[j]);
+      }
+
+      pm.addObservation(v);
+    }
+
+    sm.addPhrase(pm.getPhrase());
+  }
+
+  return sm.getTrainingSet();
+}
+
+
+export { train, xmmToRapidMixTrainingSet, rapidMixToXmmTrrainingSet };
