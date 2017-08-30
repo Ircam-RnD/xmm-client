@@ -14,7 +14,7 @@
     "bundle": "node ./bin/runner --bundle",
     "transpile": "node ./bin/runner --transpile",
     "watch": "node ./bin/runner --watch",
-    "docs": "jsdoc -c conf.json",
+    "doc": "jsdoc -c conf.json",
     "test": "babel-tape-runner \"test/*_tests.js\" | tap-spec"
   },
   "dependencies": {

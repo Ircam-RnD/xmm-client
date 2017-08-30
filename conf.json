@@ -2,6 +2,7 @@
 	"source": {
     "include": [
     	"README.md",
+      "src/index.js",
     	"src/set",
     	"src/gmm",
     	"src/hhmm"
