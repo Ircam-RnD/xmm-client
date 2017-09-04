@@ -90,11 +90,6 @@ class PhraseMaker {
     const badLengthMsg = 'Bad input length: observation length must match phrase dimension';
     const badTypeMsg = 'Bad data type: all observation values must be numbers';
 
-    if (obs.length !== this._config.dimension ||
-        (typeof(obs) === 'number' && this._config.dimension !== 1)) {
-      throw new Error(badLengthMsg);
-    }
-
     if (isArray(obs)) {
       for (let i = 0; i < obs.length; i++) {
         if (typeof(obs[i]) !== 'number') {
@@ -103,6 +98,11 @@ class PhraseMaker {
       }
     } else if (typeof(obs !== 'number')) {
       throw new Error(badTypeMsg);
+    }
+
+    if (obs.length !== this._config.dimension ||
+        (typeof(obs) === 'number' && this._config.dimension !== 1)) {
+      throw new Error(badLengthMsg);
     }
 
     // add value(s) to internal arrays
@@ -117,7 +117,7 @@ class PhraseMaker {
     } else {
       if (isArray(obs)) {
         for (let i = 0; i < obs.length; i++) {
-          this._dataIn.push(obs[i]);
+          this._data.push(obs[i]);
         }
       } else {
         this._data.push(obs);
@@ -175,10 +175,10 @@ class PhraseMaker {
     };
 
     if (this._config.bimodal) {
-      res.data_input = this._dataIn.slice(0);
-      res.data_output = this._dataOut.slice(0);
+      res.data_input = this._dataIn;//.slice(0);
+      res.data_output = this._dataOut;//.slice(0);
     } else {
-      res.data = this._data.slice(0);
+      res.data = this._data;//.slice(0);
     }
 
     return res;    
