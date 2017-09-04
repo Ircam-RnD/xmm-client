@@ -1,3 +1,7 @@
+const isArray = v => {
+  return v.constructor === Float32Array || Array.isArray(v);
+};
+
 /**
  * XMM compatible phrase builder utility <br />
  * Class to ease the creation of XMM compatible data recordings, aka phrases. <br />
@@ -91,9 +95,9 @@ class PhraseMaker {
       throw new Error(badLengthMsg);
     }
 
-    if (Array.isArray(obs)) {
-      for (let val of obs) {
-        if (typeof(val) !== 'number') {
+    if (isArray(obs)) {
+      for (let i = 0; i < obs.length; i++) {
+        if (typeof(obs[i]) !== 'number') {
           throw new Error(badTypeMsg);
         }
       }
@@ -103,15 +107,18 @@ class PhraseMaker {
 
     // add value(s) to internal arrays
     if (this._config.bimodal) {
-      this._dataIn = this._dataIn.concat(
-        obs.slice(0, this._config.dimensionInput)
-      );
-      this._dataOut = this._dataOut.concat(
-        obs.slice(this._config.dimensionInput)
-      );
+      for (let i = 0; i < this._config.dimensionInput; i++) {
+        this._dataIn.push(obs[i]);
+      }
+
+      for (let i = this._config.dimensionInput; i < this._config.dimension; i++) {
+        this._dataOut.push(obs[i]);
+      }
     } else {
-      if (Array.isArray(obs)) {
-        this._data = this._data.concat(obs);
+      if (isArray(obs)) {
+        for (let i = 0; i < obs.length; i++) {
+          this._dataIn.push(obs[i]);
+        }
       } else {
         this._data.push(obs);
       }
