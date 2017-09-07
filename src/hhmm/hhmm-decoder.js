@@ -78,7 +78,7 @@ class HhmmDecoder {
         // create results object from relevant modelResults values :
         const likeliest = (this._modelResults.likeliest > -1)
                         ? this._model.models[this._modelResults.likeliest].label
-                        : 'unknown';
+                        : null;
         const likelihoods = this._modelResults.smoothed_normalized_likelihoods.slice(0);
         res = {
           likeliest: likeliest,
@@ -163,14 +163,14 @@ class HhmmDecoder {
     if (this._model === undefined) return;
 
     const res = this._modelResults.singleClassHmmModelResults;
-    
+
     for (let i = 0; i < this._model.models.length; i++) {
       res[i].likelihood_buffer = new Array(this._likelihoodWindow);
 
       for (let j = 0; j < this._likelihoodWindow; j++) {
         res[i].likelihood_buffer[j] = 1 / this._likelihoodWindow;
       }
-    }    
+    }
   }
 
   setWeights(newWeights) {
@@ -244,7 +244,7 @@ class HhmmDecoder {
     if (this._model) {
       return JSON.parse(JSON.stringify(this._model));
     }
-    return undefined;    
+    return undefined;
   }
 
   /**
@@ -256,7 +256,7 @@ class HhmmDecoder {
   }
 
   /** @private */
-  _setModel(model) {      
+  _setModel(model) {
     this._model = undefined;
     this._modelResults = undefined;
 
@@ -299,7 +299,7 @@ class HhmmDecoder {
       } else { //------------------------------------------------------ diagonal
         outCovarSize = dimOut;
       }
-      
+
       this._modelResults.output_covariance = new Array(outCovarSize);
 
       for (let i = 0; i < dimOut; i++) {
@@ -322,7 +322,7 @@ class HhmmDecoder {
             alpha_h[j][k] = 0;
           }
         }
-        
+
         const alpha = new Array(nstates);
         for (let j = 0; j < nstates; j++) {
           alpha[j] = 0;
@@ -351,7 +351,7 @@ class HhmmDecoder {
           // for non-hierarchical :
           previous_alpha: alpha.slice(0),
           alpha: alpha,
-          // for hierarchical :       
+          // for hierarchical :
           alpha_h: alpha_h,
           // prior: new Array(nstates),
           // transition: new Array(nstates),
@@ -363,7 +363,7 @@ class HhmmDecoder {
 
           // for non-hierarchical mode
           forward_initialized: false,
-          
+
           singleClassGmmModelResults: []  // aka states
         };
 
@@ -410,7 +410,7 @@ class HhmmDecoder {
         return this._model.models[this._modelResults.likeliest].label;
       }
     }
-    return 'unknown';    
+    return 'unknown';
   }
 
   /***

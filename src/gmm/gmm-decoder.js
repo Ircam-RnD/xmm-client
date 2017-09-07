@@ -76,7 +76,7 @@ class GmmDecoder {
         // create results object from relevant modelResults values :
         const likeliest = (this._modelResults.likeliest > -1)
                         ? this._model.models[this._modelResults.likeliest].label
-                        : 'unknown';
+                        : null;
         const likelihoods = this._modelResults.smoothed_normalized_likelihoods.slice(0);
         res = {
           likeliest: likeliest,
