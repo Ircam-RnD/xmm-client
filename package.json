@@ -3,7 +3,7 @@
   "version": "0.3.1",
   "description": "JavaScript XMM utilities for the browser, including model decoders",
   "main": "dist/index.js",
-  "license": "GPL-3.0",
+  "license": "BSD-3-Clause",
   "standalone": "xmmClient",
   "repository": {
     "type": "git",
