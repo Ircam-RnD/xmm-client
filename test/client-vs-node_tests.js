@@ -13,18 +13,18 @@ const compare = (t, err, res, clientDecoder, nativeDecoder, set) => {
   let totalObservations = 0;
   let positives = 0;
   let sum = 0;
-  
+
   for (let i = 0; i < set.phrases.length; i++) {
     const p = set.phrases[i];
     const dim = p['bimodal'] ? p['dimension_input'] : p['dimension'];
     const step = p['dimension'];
-  
+
     for (let j = 0; j < p['length']; j++) {
       const startIndex = j * step;
       const endIndex = startIndex + dim;
       const clientResults = clientDecoder.filter(p['data'].slice(startIndex, endIndex));
       const nativeResults = nativeDecoder.filter(p['data'].slice(startIndex, endIndex));
-  
+
       let ok = true;
       let diff = 0;
 
@@ -43,8 +43,6 @@ const compare = (t, err, res, clientDecoder, nativeDecoder, set) => {
   const compareMsg = `compared likelihoods should have a low RMSE (epsilon = ${epsilon})`;
   t.equal(rmse < epsilon, true, compareMsg);
 };
-
-
 
 test('node vs client gmm filtering', (t) => {
   t.plan(filePaths.length);

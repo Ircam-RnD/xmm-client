@@ -32,18 +32,24 @@ test('basic use of GMRs', (t) => {
   // console.log(phraseMaker.getPhrase());
   // console.log(setMaker.getTrainingSet());
 
-  const xn = new xmmNode();
-  xn.setConfig({
+  const gmmNative = new xmmNode('gmm');
+  gmmNative.setConfig({
     absoluteRegularization: 1,
     relativeRegularization: 0.01,
   });
   const gmm = new xmm.GmmDecoder();
 
-  xn.setTrainingSet(setMaker.getTrainingSet());
-  xn.train((err, res) => {
+  gmmNative.setTrainingSet(setMaker.getTrainingSet());
+  gmmNative.train((err, res) => {
     // console.log(err, JSON.stringify(res, null));
     gmm.setModel(res);
-    t.deepEqual(gmm.filter([3, 2, 1]).outputValues, [10, 10, 10, 10], 'gmm regression should work');
+    const nativeRes = gmmNative.filter([3, 2, 1]);
+    const clientRes = gmm.filter([3, 2, 1]);
+
+    console.log(nativeRes);
+    console.log(clientRes);
+
+    t.deepEqual(clientRes.outputValues, [10, 10, 10, 10], 'gmm regression should work');
     t.end();
   });
 });
