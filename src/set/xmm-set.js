@@ -209,12 +209,14 @@ class SetMaker {
     const ocn = obj['column_names'];
     const ccn = this._config['column_names'];
 
-    if (ocn.length !== ccn.length) {
-      return false;
-    } else {
-      for (let i = 0; i < ocn.length; i++) {
-        if (ocn[i] !== ccn[i]) {
-          return false;
+    if (ocn && ccn) {
+      if (ocn.length !== ccn.length) {
+        return false;
+      } else {
+        for (let i = 0; i < ocn.length; i++) {
+          if (ocn[i] !== ccn[i]) {
+            return false;
+          }
         }
       }
     }

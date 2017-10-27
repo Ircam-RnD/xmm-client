@@ -14,12 +14,11 @@
 
 
 // from xmmGaussianDistribution::regression
-export const gmmComponentRegression = (obsIn, predictOut, c) => {
+export const gmmComponentRegression = (obsIn, c) => {
   const dim = c.dimension;
   const dimIn = c.dimension_input;
   const dimOut = dim - dimIn;
-  //let predictedOut = [];
-  predictOut = new Array(dimOut);
+  let predictOut = new Array(dimOut);
 
   //----------------------------------------------------------------------- full
   if (c.covariance_mode === 0) {
@@ -40,7 +39,8 @@ export const gmmComponentRegression = (obsIn, predictOut, c) => {
       predictOut[d] = c.covariance[d + dimIn];
     }
   }
-  //return predictionOut;
+
+  return predictOut;
 };
 
 
@@ -206,6 +206,7 @@ export const gmmRegression = (obsIn, m, mRes) => {
   } else {
     outCovarSize = dimOut;
   }
+
   mRes.output_covariance = new Array(outCovarSize);
   for (let i = 0; i < outCovarSize; i++) {
     mRes.output_covariance[i] = 0.0;
@@ -221,10 +222,9 @@ export const gmmRegression = (obsIn, m, mRes) => {
   let tmpPredictedOutput;
 
   for (let c = 0; c < m.components.length; c++) {
-    gmmComponentRegression(
-      obsIn, tmpPredictedOutput, m.components[c]
-    );
+    tmpPredictedOutput = gmmComponentRegression(obsIn, m.components[c]);
     let sqbeta = mRes.beta[c] * mRes.beta[c];
+
     for (let d = 0; d < dimOut; d++) {
       mRes.output_values[d] += mRes.beta[c] * tmpPredictedOutput[d];
       //------------------------------------------------------------------- full
@@ -246,8 +246,6 @@ export const gmmRegression = (obsIn, m, mRes) => {
 
 export const gmmObsProb = (obsIn, singleGmm, component = -1) => {
   const coeffs = singleGmm.mixture_coeffs;
-  //console.log(coeffs);
-  //if(coeffs === undefined) coeffs = [1];
   const components = singleGmm.components;
   let p = 0.0;
 
@@ -257,7 +255,7 @@ export const gmmObsProb = (obsIn, singleGmm, component = -1) => {
     }
   } else {
     p = coeffs[component] *
-      gmmComponentLikelihood(obsIn, components[component]);       
+      gmmComponentLikelihood(obsIn, components[component]);
   }
   return p;
 };
@@ -274,7 +272,7 @@ export const gmmObsProbInput = (obsIn, singleGmm, component = -1) => {
     }
   } else {
     p = coeffs[component] *
-      gmmComponentLikelihoodInput(obsIn, components[component]);      
+      gmmComponentLikelihoodInput(obsIn, components[component]);
   }
   return p;
 };
@@ -301,7 +299,7 @@ export const gmmLikelihood = (obsIn, singleGmm, singleGmmRes, obsOut = []) => {
   const components = singleGmm.components;
   const mRes = singleGmmRes;
   let likelihood = 0.0;
-  
+
   for (let c = 0; c < components.length; c++) {
     //------------------------------------------------------------------ bimodal
     if (components[c].bimodal) {
@@ -356,6 +354,9 @@ export const gmmFilter = (obsIn, gmm, gmmRes) => {
   const models = gmm.models;
   const mRes = gmmRes;
 
+  const params = gmm.shared_parameters;
+  const config = gmm.configuration;
+
   let maxLogLikelihood = 0;
   let normConstInstant = 0;
   let normConstSmoothed = 0;
@@ -364,6 +365,10 @@ export const gmmFilter = (obsIn, gmm, gmmRes) => {
     let singleRes = mRes.singleClassGmmModelResults[i];
     mRes.instant_likelihoods[i]
       = gmmLikelihood(obsIn, models[i], singleRes);
+
+    if (params.bimodal) {
+      gmmRegression(obsIn, models[i], singleRes);
+    }
 
     // as in xmm::GMM::updateResults :
     // -------------------------------
@@ -389,9 +394,6 @@ export const gmmFilter = (obsIn, gmm, gmmRes) => {
 
   // if model is bimodal :
   // ---------------------
-  const params = gmm.shared_parameters;
-  const config = gmm.configuration;
-
   if (params.bimodal) {
     let dim = params.dimension;
     let dimIn = params.dimension_input;
@@ -400,11 +402,11 @@ export const gmmFilter = (obsIn, gmm, gmmRes) => {
     //---------------------------------------------------------------- likeliest
     if (config.multiClass_regression_estimator === 0) {
       mRes.output_values
-        = mRes.singleClassModelResults[mRes.likeliest]
+        = mRes.singleClassGmmModelResults[mRes.likeliest]
             .output_values;
       mRes.output_covariance
-        = mRes.singleClassModelResults[mRes.likeliest]
-            .output_covariance;           
+        = mRes.singleClassGmmModelResults[mRes.likeliest]
+            .output_covariance;
     //------------------------------------------------------------------ mixture
     } else {
       // zero-fill output_values and output_covariance

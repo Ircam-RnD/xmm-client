@@ -70,8 +70,8 @@ class GmmDecoder {
     if(!this._model) {
       err = 'no model loaded yet';
     } else {
-      try {
-        gmmUtils.gmmFilter(observation, this._model, this._modelResults);         
+      // try {
+        gmmUtils.gmmFilter(observation, this._model, this._modelResults);
 
         // create results object from relevant modelResults values :
         const likeliest = (this._modelResults.likeliest > -1)
@@ -90,11 +90,11 @@ class GmmDecoder {
         if (this._model.shared_parameters.bimodal) {
           res['outputValues'] = this._modelResults.output_values.slice(0);
           res['outputCovariance']
-              = this.modelResults.output_covariance.slice(0);
+              = this._modelResults.output_covariance.slice(0);
         }
-      } catch (e) {
-        err = 'problem occured during filtering : ' + e;
-      }
+      // } catch (e) {
+      //   err = 'problem occured during filtering : ' + e;
+      // }
     }
 
     if (resultsCallback) {
@@ -148,7 +148,7 @@ class GmmDecoder {
       for (let j = 0; j < this._likelihoodWindow; j++) {
         res[i].likelihood_buffer[j] = 1 / this._likelihoodWindow;
       }
-    }    
+    }
   }
 
   setWeights(newWeights) {
@@ -221,7 +221,7 @@ class GmmDecoder {
     if (this._model) {
       return JSON.parse(JSON.stringify(this._model));
     }
-    return undefined;    
+    return undefined;
   }
 
   /**
@@ -276,7 +276,7 @@ class GmmDecoder {
       } else {
         outCovarSize = dimOut;
       }
-      
+
       this._modelResults.output_covariance = new Array(outCovarSize);
 
       for (let i = 0; i < dimOut; i++) {
@@ -301,7 +301,7 @@ class GmmDecoder {
         for (let j = 0; j < this._likelihoodWindow; j++) {
           res.likelihood_buffer[j] = 1 / this._likelihoodWindow;
         }
-        
+
         res.likelihood_buffer_index = 0;
 
         // the following variables are used for regression :
@@ -340,7 +340,7 @@ class GmmDecoder {
         return this._model.models[this._modelResults.likeliest].label;
       }
     }
-    return 'unknown';    
+    return 'unknown';
   }
 
   /***
