@@ -433,11 +433,12 @@ export const gmmFilter = (obsIn, gmm, gmmRes) => {
         let smoothNormLikelihood
           = mRes.smoothed_normalized_likelihoods[i];
         let singleRes = mRes.singleClassGmmModelResults[i];
-        for (let d = 0; d < dimOut; i++) {
+        for (let d = 0; d < dimOut; d++) {
           mRes.output_values[d] += smoothNormLikelihood *
                        singleRes.output_values[d];
           //--------------------------------------------------------------- full
           if (config.default_parameters.covariance_mode === 0) {
+          console.log('full covariance');
             for (let d2 = 0; d2 < dimOut; d2++) {
               let index = d * dimOut + d2;
               mRes.output_covariance[index]
@@ -446,6 +447,7 @@ export const gmmFilter = (obsIn, gmm, gmmRes) => {
             }
           //----------------------------------------------------------- diagonal
           } else {
+          console.log('diagonal covariance');
             mRes.output_covariance[d]
               += smoothNormLikelihood *
                  singleRes.output_covariance[d];

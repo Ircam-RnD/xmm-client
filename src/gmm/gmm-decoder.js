@@ -70,8 +70,10 @@ class GmmDecoder {
     if(!this._model) {
       err = 'no model loaded yet';
     } else {
-      // try {
+      try {
+        console.log('before');
         gmmUtils.gmmFilter(observation, this._model, this._modelResults);
+        console.log('after');
 
         // create results object from relevant modelResults values :
         const likeliest = (this._modelResults.likeliest > -1)
@@ -92,9 +94,9 @@ class GmmDecoder {
           res['outputCovariance']
               = this._modelResults.output_covariance.slice(0);
         }
-      // } catch (e) {
-      //   err = 'problem occured during filtering : ' + e;
-      // }
+      } catch (e) {
+        err = 'problem occured during filtering : ' + e;
+      }
     }
 
     if (resultsCallback) {

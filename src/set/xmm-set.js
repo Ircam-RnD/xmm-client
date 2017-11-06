@@ -63,7 +63,7 @@ class SetMaker {
     } else if (!this._checkCompatibility(phrase)) {
       throw new Error('Bad phrase format: added phrase must match current set configuration');
     }
-    this._phrases.push(phrase);
+    this._phrases.push(JSON.parse(JSON.stringify(phrase)));
   }
 
   /**
