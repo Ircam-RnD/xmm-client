@@ -71,9 +71,7 @@ class GmmDecoder {
       err = 'no model loaded yet';
     } else {
       try {
-        console.log('before');
         gmmUtils.gmmFilter(observation, this._model, this._modelResults);
-        console.log('after');
 
         // create results object from relevant modelResults values :
         const likeliest = (this._modelResults.likeliest > -1)
