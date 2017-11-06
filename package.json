@@ -36,6 +36,6 @@
     "tape": "^4.6.0",
     "uglify-js": "^2.6.2",
     "watch": "^0.17.1",
-    "xmm-node": "github:ircam-rnd/xmm-node#v0.3.2"
+    "xmm-node": "github:ircam-rnd/xmm-node#v0.3.3"
   }
 }
