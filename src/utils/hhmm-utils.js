@@ -111,7 +111,7 @@ export const hmmRegression = (obsIn, m, mRes) => {
         }
       //------------------------------------------------------- non-hierarchical
       } else {
-        mRes.output_values[d] += mRes.alpha[i] * 
+        mRes.output_values[d] += mRes.alpha[i] *
                      tmpPredictedOutput[d] / normConstant;
         //----------------------------------------------------------------- full
         if (m.parameters.covariance_mode === 0) {
@@ -139,10 +139,10 @@ export const hmmForwardInit = (obsIn, m, mRes, obsOut = []) => {
   const nstates = m.parameters.states;
   let normConst = 0.0;
 
-  //-------------------------------------------------------------------- ergodic        
+  //-------------------------------------------------------------------- ergodic
   if (m.parameters.transition_mode === 0) {
     for (let i = 0; i < nstates; i++) {
-      //---------------------------------------------------------------- bimodal        
+      //---------------------------------------------------------------- bimodal
       if (m.states[i].components[0].bimodal) {
         if (obsOut.length > 0) {
           mRes.alpha[i] = m.prior[i] *
@@ -154,19 +154,19 @@ export const hmmForwardInit = (obsIn, m, mRes, obsOut = []) => {
                   gmmUtils.gmmObsProbInput(obsIn,
                                m.states[i]);
         }
-      //--------------------------------------------------------------- unimodal        
+      //--------------------------------------------------------------- unimodal
       } else {
         mRes.alpha[i] = m.prior[i] *
                 gmmUtils.gmmObsProb(obsIn, m.states[i]);
       }
       normConst += mRes.alpha[i];
     }
-  //----------------------------------------------------------------- left-right        
+  //----------------------------------------------------------------- left-right
   } else {
     for (let i = 0; i < mRes.alpha.length; i++) {
       mRes.alpha[i] = 0.0;
     }
-    //------------------------------------------------------------------ bimodal        
+    //------------------------------------------------------------------ bimodal
     if (m.states[0].components[0].bimodal) {
       if (obsOut.length > 0) {
         mRes.alpha[0] = gmmUtils.gmmObsProbBimodal(obsIn,
@@ -176,7 +176,7 @@ export const hmmForwardInit = (obsIn, m, mRes, obsOut = []) => {
         mRes.alpha[0] = gmmUtils.gmmObsProbInput(obsIn,
                              m.states[0]);
       }
-    //----------------------------------------------------------------- unimodal        
+    //----------------------------------------------------------------- unimodal
     } else {
       mRes.alpha[0] = gmmUtils.gmmObsProb(obsIn, m.states[0]);
     }
@@ -222,7 +222,7 @@ export const hmmForwardUpdate = (obsIn, m, mRes, obsOut = []) => {
       }
     }
 
-    //------------------------------------------------------------------ bimodal        
+    //------------------------------------------------------------------ bimodal
     if (m.states[i].components[0].bimodal) {
       if (obsOut.length > 0) {
         mRes.alpha[i] *= gmmUtils.gmmObsProbBimodal(obsIn,
@@ -232,7 +232,7 @@ export const hmmForwardUpdate = (obsIn, m, mRes, obsOut = []) => {
         mRes.alpha[i] *= gmmUtils.gmmObsProbInput(obsIn,
                               m.states[i]);
       }
-    //----------------------------------------------------------------- unimodal        
+    //----------------------------------------------------------------- unimodal
     } else {
       mRes.alpha[i] *= gmmUtils.gmmObsProb(obsIn, m.states[i]);
     }
@@ -252,7 +252,7 @@ export const hmmForwardUpdate = (obsIn, m, mRes, obsOut = []) => {
 
 export const hmmUpdateAlphaWindow = (m, mRes) => {
   const nstates = m.parameters.states;
-  
+
   mRes.likeliest_state = 0;
 
   let best_alpha;
@@ -261,7 +261,7 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
     best_alpha = mRes.alpha_h[0][0] + mRes.alpha_h[1][0];
   //----------------------------------------------------------- non-hierarchical
   } else {
-    best_alpha = mRes.alpha[0]; 
+    best_alpha = mRes.alpha[0];
   }
 
   for (let i = 1; i < nstates; i++) {
@@ -271,7 +271,7 @@ export const hmmUpdateAlphaWindow = (m, mRes) => {
         best_alpha = mRes.alpha_h[0][i] + mRes.alpha_h[1][i];
         mRes.likeliest_state = i;
       }
-    //--------------------------------------------------------- non-hierarchical        
+    //--------------------------------------------------------- non-hierarchical
     } else {
       if(mRes.alpha[i] > best_alpha) {
         best_alpha = mRes.alpha[i];
@@ -313,10 +313,6 @@ export const hmmUpdateResults = (m, mRes) => {
     = (mRes.likelihood_buffer_index + 1) % bufLength;
 
   mRes.log_likelihood = mRes.likelihood_buffer.reduce((a, b) => a + b, 0);
-  // mRes.log_likelihood = 0;
-  // for (let i = 0; i < bufSize; i++) {
-  //   mRes.log_likelihood += mRes.likelihood_buffer[i];
-  // }
   mRes.log_likelihood /= bufLength;
 
   mRes.progress = 0;
@@ -337,7 +333,7 @@ export const hmmUpdateResults = (m, mRes) => {
     }
   }
 
-  mRes.progress /= (m.parameters.states - 1);
+  mRes.progress /= (Math.max(m.parameters.states, 2) - 1);
 };
 
 
@@ -474,7 +470,7 @@ export const hhmmForwardUpdate = (obsIn, hm, hmRes) => {
     const m = hm.models[i];
     const nstates = m.parameters.states;
     const mRes = hmRes.singleClassHmmModelResults[i];
-    
+
     //======================= compute frontier variable
     front = new Array(nstates);
     for (let j = 0; j < nstates; j++) {
