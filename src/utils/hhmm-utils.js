@@ -334,6 +334,7 @@ export const hmmUpdateResults = (m, mRes) => {
   }
 
   mRes.progress /= (Math.max(m.parameters.states, 2) - 1);
+  mRes.progress = Math.min(mRes.progress, 1);
 };
 
 
